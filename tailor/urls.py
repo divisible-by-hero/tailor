@@ -6,5 +6,8 @@ urlpatterns = patterns('',
     url(r'^home/$', home),
     url(r'^command/(?P<command>[-\w]+)/$', command),
 
+    url(r'^api/schema/$', schema, name='schema'),
+    url(r'^api/$', endpoint, name='endpoint'),
+
 )
 
