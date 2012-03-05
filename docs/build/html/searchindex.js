@@ -1,1 +1,1 @@
-Search.setIndex({objects:{},terms:{index:0,search:0,welcom:0,modul:0,indic:0,content:0,tailor:0,tabl:0,document:0,page:0},objtypes:{},titles:["Welcome to Tailor&#8217;s documentation!"],objnames:{},filenames:["index"]})
+Search.setIndex({objects:{},terms:{index:[],search:[],via:1,simpli:1,welcom:0,modul:[],indic:[],django:1,content:0,start:[0,1],tailor:[0,1],fabric:1,tabl:[],pip:1,quick:[0,1],document:0,instal:[0,1],page:[],requir:[0,1],greater:1},objtypes:{},titles:["Welcome to Tailor&#8217;s documentation!","Quick Start"],objnames:{},filenames:["index","quick_start"]})

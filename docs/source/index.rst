@@ -1,5 +1,5 @@
 .. Tailor documentation master file, created by
-   sphinx-quickstart on Sun Mar  4 10:03:49 2012.
+   sphinx-quickstart on Mon Mar  5 15:24:28 2012.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
@@ -10,13 +10,9 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
+   
+   quick_start
 
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 

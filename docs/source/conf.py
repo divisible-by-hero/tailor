@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Tailor documentation build configuration file, created by
-# sphinx-quickstart on Sun Mar  4 10:03:49 2012.
+# sphinx-quickstart on Mon Mar  5 15:24:28 2012.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Tailor'
-copyright = u'2012, Derek Stegelman, Garrett Pennington, Jon Faustman'
+copyright = u'2012, Derek Stegelman, Garrett Pennington, and Jon Faustman'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -91,7 +91,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'nature'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -184,7 +184,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'Tailor.tex', u'Tailor Documentation',
-   u'Derek Stegelman, Garrett Pennington, Jon Faustman', 'manual'),
+   u'Derek Stegelman, Garrett Pennington, and Jon Faustman', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -214,7 +214,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'tailor', u'Tailor Documentation',
-     [u'Derek Stegelman, Garrett Pennington, Jon Faustman'], 1)
+     [u'Derek Stegelman, Garrett Pennington, and Jon Faustman'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -228,7 +228,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'Tailor', u'Tailor Documentation',
-   u'Derek Stegelman, Garrett Pennington, Jon Faustman', 'Tailor', 'One line description of project.',
+   u'Derek Stegelman, Garrett Pennington, and Jon Faustman', 'Tailor', 'One line description of project.',
    'Miscellaneous'),
 ]
 
