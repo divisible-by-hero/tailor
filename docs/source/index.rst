@@ -6,6 +6,17 @@
 Welcome to Tailor's documentation!
 ==================================
 
+Tailor is a Python (Django) application designed to take your fabric commands, and make them executable from an API.  Tailor is built with modularity in mind by binding explicitly to the Fabric file you supply.  Fabric commands can be made accessible to the web API by adding the @tailored decorator.
+
+
+Feature Set
+-----------
+
+* Drop in fabfile
+* Execute decorated functions through a HTTP based API.
+* Key based authentication
+
+
 Contents:
 
 .. toctree::
