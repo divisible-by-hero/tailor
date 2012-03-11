@@ -102,8 +102,7 @@ def fab(request):
             env.apache_bin_dir = "/etc/init.d/apache2"
             env.user = 'fabric'
                 
-            # TODO: removing these hard coded values.  use values from POST data
-            #env.hosts = ['ec2-23-20-51-181.compute-1.amazonaws.com',]
+            #Set Host via POST Data
             env.hosts = _input['hosts']
             
 
@@ -120,8 +119,9 @@ def fab(request):
             for task, task_func in unpickeled_functions.iteritems():
                 exec task_func in globals(), function_dictionary            
 
-            # TODO: Call the fabric tasks listed in the POST data
-            execute(function_dictionary['kick_apache'])
+            #Call the fabric tasks listed in the POST data
+            for command in _input['commands']:
+                execute(function_dictionary[command])
     
             #respond
             response_dict = {'success':True, 'message':"Commands Executed"}
