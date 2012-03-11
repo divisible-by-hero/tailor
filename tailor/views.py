@@ -10,7 +10,10 @@ from django.views.decorators.csrf import csrf_exempt
 
 from fabric.api import *
 
-def tailored(request):
+from tailor.decorators import tailored
+
+
+def schema(request):
     '''
     Parses the project fabfile and returns API listing
     the available commands.  Commands are made available by
@@ -57,9 +60,9 @@ def fab(request):
     # NOTE: This is all PoC at this point.  Lots of hard-coded values    
     '''
 
-    if request.method == 'POST':
-        try:
-            client_url = "http://localhost:8001/tailor/api/v1/tailored/"
+    if request.method == 'GET':
+        #try:
+            client_url = "http://localhost:8001/tailor/api/v1/schema/"
             client_data = urllib2.urlopen(client_url)
             client_json = client_data.read()
             client_dict = simplejson.loads(client_json)
@@ -72,29 +75,30 @@ def fab(request):
     
             # TODO: removing these hard coded values.  either use 'env' values from client api or POST data
             env.apache_bin_dir = "/etc/init.d/apache2"
-            env.hosts = ['host_name_removed']
+            env.hosts = ['ec2-23-20-51-181.compute-1.amazonaws.com',]
             env.user = 'fabric'
     
-            # TODO: Get these function strings from the client api instead of hard-coded
-            picklefunction = "S'def kick_apache():\\n \"\"\" Kick the apache server for this app. \"\"\"\\n run(\\'sudo %s graceful\\' % env.apache_bin_dir)\\n'\np0\n."
-            stringfunction = pickle.loads(str(picklefunction))
-    
+            #Unpickle functions
+            unpickeled_functions = {}
+            unpickeled_functions['kick_apache'] = pickle.loads(str(client_dict['kick_apache']))
+
             # TODO: Do this dynamically
             function_dictionary = {}
-            exec stringfunction in globals(), function_dictionary
+            exec unpickeled_functions['kick_apache'] in globals(), function_dictionary
             kick_apache = function_dictionary['kick_apache']
 
             # TODO: Call the fabric tasks listed in the POST data
-            #execute(kick_apache)
+            execute(kick_apache)
     
             #respond
             response_dict = {'success':True, 'message':"Commands Executed"}
             response = simplejson.dumps(response_dict)
             return HttpResponse(response, mimetype='application/json', status=200)
-        except:
-            response_dict = {'success':False, 'message':"Coudn't not execute commands"}
-            response = simplejson.dumps(response_dict)
-            return HttpResponse(response, mimetype='application/json', status=400)
+        #except Exception, e:
+            #print "Error: %s" % e
+            #response_dict = {'success':False, 'message':"Coudn't not execute commands"}
+            #response = simplejson.dumps(response_dict)
+            #return HttpResponse(response, mimetype='application/json', status=400)
     else:
         response = "Method is not allow. Only POST is allowed"
         return HttpResponse(response, status=400)
