@@ -9,6 +9,8 @@ from django.conf import settings
 
 from fabric.api import *
 
+
+
 def tailored(request):
     '''
     Parses the project fabfile and returns API listing
@@ -48,6 +50,17 @@ def fab(request):
     Accepts JSON (and more later on?) data describing fabric commands
     and runs them if they exist and are allowed.
     '''
+    
+    import fabric
+    # Turn off output as to not write against stdout and stderr
+    
+    fabric.state.output["status"] = False
+    fabric.state.output["running"] = False
+    fabric.state.output["user"] = False
+    fabric.state.output["warnings"] = False
+    fabric.state.output["stderr"] = False
+    fabric.state.output['stdout'] = False
+    fabric.state.output['aborts'] = False
 
     # NOTE: This is all PoC at this point.  Lots of hard-coded values    
 
