@@ -12,14 +12,13 @@ from fabric.api import *
 
 from tailor.decorators import tailored
 
-
 def schema(request):
     '''
     Parses the project fabfile and returns API listing
     the available commands.  Commands are made available by
     adding the @tailored (name?) decorator to a fabric function.
     '''
-    
+
     #The directory that hold the fabfile needs to be added to the python path
     from conf import fabfile
     
@@ -27,17 +26,22 @@ def schema(request):
     
     # Exclude certain properties in the fabfile
     # TODO: replace by opting in with decorator, instead of opting everything else out
-    exclude_list = ['__builtins__', '__doc__', '__file__', '__name__', '__package__', 'abort', 'cd', 'execute', 'fastprint', 'get', 'glob', 'hide', 'hosts',  'lcd',  'local',  'open_shell', 'os', 'output', 'parallel', 'path',  'prefix', 'prompt', 'put', 'puts', 'reboot',  'requests', 'require', 'roles', 'run', 'runs_once', 'serial', 'settings', 'setup', 'show', 'simplejson', 'ssh', 'sudo', 'task', 'time', 'warn', 'with_settings', 'with_statement']
+    exclude_list = ['__builtins__', '__doc__', '__file__', '__name__', '__package__', 'abort', 'cd', 'execute', 'fastprint', 'get', 'glob', 'hide', 'hosts',  'lcd',  'local',  'open_shell', 'os', 'output', 'parallel', 'path',  'prefix', 'prompt', 'put', 'puts', 'reboot',  'requests', 'require', 'roles', 'run', 'runs_once', 'serial', 'settings', 'setup', 'show', 'simplejson', 'ssh', 'sudo', 'task', 'time', 'warn', 'with_settings', 'with_statement', 'paths',]
  
 
     fab_dict = {}
+    fab_tasks = {}
+    fab_dict['tasks'] = fab_tasks
     for prop in fab_props:
-        if not prop in exclude_list: # TODO: Only add to fab_dict opted in tasks
+        if not prop in exclude_list:
             # If it's a callable, pickle it
             if hasattr( eval('fabfile.%s' % prop), '__call__' ):
-                _callable = eval('fabfile.%s' % prop)
-                callable_source = inspect.getsource(_callable)
-                fab_dict[prop] = pickle.dumps(callable_source)
+                if hasattr( eval('fabfile.%s' % prop), 'tailored' ):
+                    #print prop
+                    _callable = eval('fabfile.%s' % prop)
+                    callable_source = inspect.getsource(_callable)
+                    #fab_tasks.append(pickle.dumps(callable_source))
+                    fab_tasks[prop] = (pickle.dumps(callable_source))
             # Else just use the value
             else:
                 fab_dict[prop] = eval('fabfile.%s' % prop)
@@ -80,15 +84,18 @@ def fab(request):
     
             #Unpickle functions
             unpickeled_functions = {}
-            unpickeled_functions['kick_apache'] = pickle.loads(str(client_dict['kick_apache']))
+            #print client_dict['tasks']
+            for task, task_func in client_dict['tasks'].iteritems():
+                unpickeled_functions[task] = pickle.loads(str(task_func))
 
-            # TODO: Do this dynamically
+
+            #Create functions on the fly
             function_dictionary = {}
-            exec unpickeled_functions['kick_apache'] in globals(), function_dictionary
-            kick_apache = function_dictionary['kick_apache']
+            for task, task_func in unpickeled_functions.iteritems():
+                exec task_func in function_dictionary            
 
             # TODO: Call the fabric tasks listed in the POST data
-            execute(kick_apache)
+            #execute(kick_apache)
     
             #respond
             response_dict = {'success':True, 'message':"Commands Executed"}
