@@ -3,10 +3,7 @@ def tailored(func):
     func.tailored = True
     return func
     
-def change_run_to_local(func):
-    ''' Change any run method to local in the method. '''
-    
-    func_map = {}
-    func_map['run'] = 'local'
-    
+def dependency(func):
+    ''' Marks method as a dependency, not availble to the API, but is used with other API commands. '''
+    func.dependency = True
     return func

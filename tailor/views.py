@@ -63,6 +63,17 @@ def fab(request):
 
     # NOTE: This is all PoC at this point.  Lots of hard-coded values    
     '''
+    
+    import fabric
+    
+    # Turn off output as to not write against stdout and stderr
+    fabric.state.output["status"] = False
+    fabric.state.output["running"] = False
+    fabric.state.output["user"] = False
+    fabric.state.output["warnings"] = False
+    fabric.state.output["stderr"] = False
+    fabric.state.output['stdout'] = False
+    fabric.state.output['aborts'] = False
 
     if request.method == 'GET':
         #try:
