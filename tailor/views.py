@@ -6,6 +6,7 @@ import urllib2
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 
 from fabric.api import *
 
@@ -42,11 +43,16 @@ def tailored(request):
     response = simplejson.dumps(fab_dict)    
     
     return HttpResponse(response, mimetype='application/json', status=200)
-    
+
+
+@csrf_exempt    
 def fab(request):
     '''
     Accepts JSON (and more later on?) data describing fabric commands
     and runs them if they exist and are allowed.
+
+    #Test it locally
+    #curl --dump-header - -H "Content-Type: application/json" -X POST --data '{'hosts': ['http://server1.example.com','http://server2.example.com','http://server3.example.com'],}' http://localhost:8000/tailor/api/v1/fab/
 
     # NOTE: This is all PoC at this point.  Lots of hard-coded values    
     '''
