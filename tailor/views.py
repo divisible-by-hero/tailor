@@ -47,45 +47,52 @@ def fab(request):
     '''
     Accepts JSON (and more later on?) data describing fabric commands
     and runs them if they exist and are allowed.
-    '''
 
     # NOTE: This is all PoC at this point.  Lots of hard-coded values    
+    '''
 
-    try:
-        client_url = "http://localhost:8001/tailor/api/v1/tailored/"
-        client_data = urllib2.urlopen(client_url)
-        client_json = client_data.read()
-        client_dict = simplejson.loads(client_json)
+    if request.method == 'POST':
+        try:
+            client_url = "http://localhost:8001/tailor/api/v1/tailored/"
+            client_data = urllib2.urlopen(client_url)
+            client_json = client_data.read()
+            client_dict = simplejson.loads(client_json)
     
-        #Need this?
-        from fabric.api import env
+            #Need this?
+            from fabric.api import env
     
-        # TODO: dynamically configure the 'env' dict from
-        #env = client_dict['env']
+            # TODO: dynamically configure the 'env' dict from
+            #env = client_dict['env']
     
-        # TODO: removing these hard coded values.  either use 'env' values from client api or POST data
-        env.apache_bin_dir = "/etc/init.d/apache2"
-        env.hosts = ['host_name_removed']
-        env.user = 'fabric'
+            # TODO: removing these hard coded values.  either use 'env' values from client api or POST data
+            env.apache_bin_dir = "/etc/init.d/apache2"
+            env.hosts = ['host_name_removed']
+            env.user = 'fabric'
     
-        # TODO: Get these function strings from the client api instead of hard-coded
-        picklefunction = "S'def kick_apache():\\n \"\"\" Kick the apache server for this app. \"\"\"\\n run(\\'sudo %s graceful\\' % env.apache_bin_dir)\\n'\np0\n."
-        stringfunction = pickle.loads(str(picklefunction))
+            # TODO: Get these function strings from the client api instead of hard-coded
+            picklefunction = "S'def kick_apache():\\n \"\"\" Kick the apache server for this app. \"\"\"\\n run(\\'sudo %s graceful\\' % env.apache_bin_dir)\\n'\np0\n."
+            stringfunction = pickle.loads(str(picklefunction))
     
-        # TODO: Do this dynamically
-        function_dictionary = {}
-        exec stringfunction in globals(), function_dictionary
-        kick_apache = function_dictionary['kick_apache']
+            # TODO: Do this dynamically
+            function_dictionary = {}
+            exec stringfunction in globals(), function_dictionary
+            kick_apache = function_dictionary['kick_apache']
 
-        # TODO: Call the fabric tasks listed in the POST data
-        execute(kick_apache)
+            # TODO: Call the fabric tasks listed in the POST data
+            #execute(kick_apache)
     
-        #respond
-        response_dict = {'success':True, 'message':"Commands Executed"}
-        response = simplejson.dumps(response_dict)
-        return HttpResponse(response, mimetype='application/json', status=200)
-    except:
-        response_dict = {'success':False, 'message':"Coudn't not execute commands"}
-        response = simplejson.dumps(response_dict)
-        return HttpResponse(response, mimetype='application/json', status=400)
+            #respond
+            response_dict = {'success':True, 'message':"Commands Executed"}
+            response = simplejson.dumps(response_dict)
+            return HttpResponse(response, mimetype='application/json', status=200)
+        except:
+            response_dict = {'success':False, 'message':"Coudn't not execute commands"}
+            response = simplejson.dumps(response_dict)
+            return HttpResponse(response, mimetype='application/json', status=400)
+    else:
+        response = "Method is not allow. Only POST is allowed"
+        return HttpResponse(response, status=400)
+
+
+
     
