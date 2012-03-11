@@ -59,9 +59,10 @@ def fab(request):
     and runs them if they exist and are allowed.
 
     #Test it locally
-    #curl --dump-header - -H "Content-Type: application/json" -X POST --data '{'hosts': ['http://server1.example.com','http://server2.example.com','http://server3.example.com'],}' http://localhost:8000/tailor/api/v1/fab/
+    curl --dump-header - -H "Content-Type: application/json" -X POST --data '{"hosts": ["server1.example.com"],"commands": ["alpha", "kick_apache"] }' http://localhost:8000/tailor/api/v1/fab/
 
-    # NOTE: This is all PoC at this point.  Lots of hard-coded values    
+    # NOTE: This is all PoC at this point.  Lots of hard-coded values
+    # TODO: Seperate all this out to methods
     '''
     
     import fabric
@@ -75,8 +76,18 @@ def fab(request):
     fabric.state.output['stdout'] = False
     fabric.state.output['aborts'] = False
 
-    if request.method == 'GET':
-        #try:
+    if request.method == 'POST':
+        
+        try:
+            _input = request.raw_post_data
+            _input = simplejson.loads(request.raw_post_data)
+            print _input
+        #except JSONDecodeError, e:
+            #print "Couldn't parse JSON: %s" % e
+        except Exception, e:
+            print "Error: %s" % e
+        
+        try:
             client_url = "http://localhost:8001/tailor/api/v1/schema/"
             client_data = urllib2.urlopen(client_url)
             client_json = client_data.read()
@@ -112,11 +123,11 @@ def fab(request):
             response_dict = {'success':True, 'message':"Commands Executed"}
             response = simplejson.dumps(response_dict)
             return HttpResponse(response, mimetype='application/json', status=200)
-        #except Exception, e:
-            #print "Error: %s" % e
-            #response_dict = {'success':False, 'message':"Coudn't not execute commands"}
-            #response = simplejson.dumps(response_dict)
-            #return HttpResponse(response, mimetype='application/json', status=400)
+        except Exception, e:
+            print "Error: %s" % e
+            response_dict = {'success':False, 'message':"Coudn't not execute commands"}
+            response = simplejson.dumps(response_dict)
+            return HttpResponse(response, mimetype='application/json', status=400)
     else:
         response = "Method is not allow. Only POST is allowed"
         return HttpResponse(response, status=400)
