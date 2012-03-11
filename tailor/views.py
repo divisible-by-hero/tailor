@@ -66,7 +66,7 @@ def fab(request):
     '''
     
     import fabric
-    
+
     # Turn off output as to not write against stdout and stderr
     fabric.state.output["status"] = False
     fabric.state.output["running"] = False
@@ -76,12 +76,13 @@ def fab(request):
     fabric.state.output['stdout'] = False
     fabric.state.output['aborts'] = False
 
+
     if request.method == 'POST':
         
         try:
             _input = request.raw_post_data
             _input = simplejson.loads(request.raw_post_data)
-            print _input
+            #print _input['hosts']
         #except JSONDecodeError, e:
             #print "Couldn't parse JSON: %s" % e
         except Exception, e:
@@ -98,11 +99,14 @@ def fab(request):
     
             # TODO: dynamically configure the 'env' dict from
             #env = client_dict['env']
-    
-            # TODO: removing these hard coded values.  either use 'env' values from client api or POST data
             env.apache_bin_dir = "/etc/init.d/apache2"
-            env.hosts = ['ec2-23-20-51-181.compute-1.amazonaws.com',]
             env.user = 'fabric'
+                
+            # TODO: removing these hard coded values.  use values from POST data
+            #env.hosts = ['ec2-23-20-51-181.compute-1.amazonaws.com',]
+            env.hosts = _input['hosts']
+            
+
     
             #Unpickle functions
             unpickeled_functions = {}
@@ -114,10 +118,10 @@ def fab(request):
             #Create functions on the fly
             function_dictionary = {}
             for task, task_func in unpickeled_functions.iteritems():
-                exec task_func in function_dictionary            
+                exec task_func in globals(), function_dictionary            
 
             # TODO: Call the fabric tasks listed in the POST data
-            #execute(kick_apache)
+            execute(function_dictionary['kick_apache'])
     
             #respond
             response_dict = {'success':True, 'message':"Commands Executed"}
