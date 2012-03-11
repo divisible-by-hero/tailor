@@ -3,3 +3,7 @@ def tailored(func):
     func.tailored = True
     return func
     
+def dependency(func):
+    ''' Marks method as a dependency, not availble to the API, but is used with other API commands. '''
+    func.dependency = True
+    return func
