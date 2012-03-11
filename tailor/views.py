@@ -31,17 +31,22 @@ def schema(request):
 
     fab_dict = {}
     fab_tasks = {}
+    fab_dependencies = {}
     fab_dict['tasks'] = fab_tasks
+    fab_dict['dependencies'] = fab_dependencies
+    
     for prop in fab_props:
         if not prop in exclude_list:
             # If it's a callable, pickle it
             if hasattr( eval('fabfile.%s' % prop), '__call__' ):
                 if hasattr( eval('fabfile.%s' % prop), 'tailored' ):
-                    #print prop
                     _callable = eval('fabfile.%s' % prop)
                     callable_source = inspect.getsource(_callable)
-                    #fab_tasks.append(pickle.dumps(callable_source))
                     fab_tasks[prop] = (pickle.dumps(callable_source))
+                elif hasattr( eval('fabfile.%s' % prop), 'dependency' ):
+                    _callable = eval('fabfile.%s' % prop)
+                    callable_source = inspect.getsource(_callable)
+                    fab_dependencies[prop] = (pickle.dumps(callable_source))
             # Else just use the value
             else:
                 fab_dict[prop] = eval('fabfile.%s' % prop)
