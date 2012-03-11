@@ -38,6 +38,9 @@ def endpoint(request):
     
     commands = request.raw_post_data
     
+    
+    
+    
     #parse, parse, parse commands
     
     #psuedocode
