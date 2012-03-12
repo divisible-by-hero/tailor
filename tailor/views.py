@@ -2,6 +2,7 @@ import pickle
 import inspect
 import simplejson
 import urllib2
+import sys
 
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -85,7 +86,7 @@ def fab(request):
             #print "Couldn't parse JSON: %s" % e
         except Exception, e:
             print "Error: %s" % e
-        
+                
         try:
             client_url = "http://localhost:8001/tailor/api/v1/schema/"
             client_data = urllib2.urlopen(client_url)
@@ -136,7 +137,8 @@ def fab(request):
                 execute(eval("fabric_stuff." + command))
 
             import os
-            #os.remove("fabric_stuff.py")
+            os.remove("fabric_stuff.py")
+
             #respond
             response_dict = {'success':True, 'message':"Commands Executed"}
             response = simplejson.dumps(response_dict)
