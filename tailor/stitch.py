@@ -14,7 +14,7 @@ class Shirt:
         new_string = new_string + "from fabric.api import *\nfrom tailor.decorators import *\n\n\nimport fabric\n\n\n"
         
         
-        new_string = new_string + '''fabric.state.output["status"] = False\nfabric.state.output["running"] = False\nfabric.state.output["user"] = False\nfabric.state.output["warnings"] = False\nfabric.state.output["stderr"] = False\nfabric.state.output['stdout'] = False\nfabric.state.output['aborts'] = False\n\n'''
+        new_string = new_string + '''fabric.state.output["status"] = True\nfabric.state.output["running"] = True\nfabric.state.output["user"] = True\nfabric.state.output["warnings"] = True\nfabric.state.output["stderr"] = True\nfabric.state.output['stdout'] = True\nfabric.state.output['aborts'] = False\n\n'''
         fabfile.write(new_string)
         fabfile.close()
     
@@ -53,5 +53,5 @@ class Shirt:
         
     def cleanup(self):
         import os
-        os.remove(fab_temp.py)
+        os.remove("fab_temp.py")
         
