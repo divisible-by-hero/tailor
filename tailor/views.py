@@ -6,7 +6,7 @@ import sys
 
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.conf import settings
+from django.conf import settings as djangosettings
 from django.views.decorators.csrf import csrf_exempt
 
 from fabric.api import *
@@ -20,42 +20,48 @@ def schema(request):
     adding the @tailored (name?) decorator to a fabric function.
     '''
 
-    #The directory that hold the fabfile needs to be added to the python path
-    from conf import fabfile
+    if request.REQUEST.get('key'):
+        if request.REQUEST.get('key') in djangosettings.TAILOR_API_KEYS.values():
+
+            #The directory that hold the fabfile needs to be added to the python path
+            from conf import fabfile
     
-    fab_props = dir(fabfile)
+            fab_props = dir(fabfile)
     
-    # Exclude certain properties in the fabfile
-    # TODO: replace by opting in with decorator, instead of opting everything else out
-    exclude_list = ['__builtins__', '__doc__', '__file__', '__name__', '__package__', 'abort', 'cd', 'execute', 'fastprint', 'get', 'glob', 'hide', 'hosts',  'lcd',  'local',  'open_shell', 'os', 'output', 'parallel', 'path',  'prefix', 'prompt', 'put', 'puts', 'reboot',  'requests', 'require', 'roles', 'run', 'runs_once', 'serial', 'settings', 'setup', 'show', 'simplejson', 'ssh', 'sudo', 'task', 'time', 'warn', 'with_settings', 'with_statement', 'paths',]
+            # Exclude certain properties in the fabfile
+            # TODO: replace by opting in with decorator, instead of opting everything else out
+            exclude_list = ['__builtins__', '__doc__', '__file__', '__name__', '__package__', 'abort', 'cd', 'execute', 'fastprint', 'get', 'glob', 'hide', 'hosts',  'lcd',  'local',  'open_shell', 'os', 'output', 'parallel', 'path',  'prefix', 'prompt', 'put', 'puts', 'reboot',  'requests', 'require', 'roles', 'run', 'runs_once', 'serial', 'settings', 'setup', 'show', 'simplejson', 'ssh', 'sudo', 'task', 'time', 'warn', 'with_settings', 'with_statement', 'paths',]
  
 
-    fab_dict = {}
-    fab_tasks = {}
-    fab_dependencies = {}
-    fab_dict['tasks'] = fab_tasks
-    fab_dict['dependencies'] = fab_dependencies
+            fab_dict = {}
+            fab_tasks = {}
+            fab_dependencies = {}
+            fab_dict['tasks'] = fab_tasks
+            fab_dict['dependencies'] = fab_dependencies
     
-    for prop in fab_props:
-        if not prop in exclude_list:
-            # If it's a callable, pickle it
-            if hasattr( eval('fabfile.%s' % prop), '__call__' ):
-                if hasattr( eval('fabfile.%s' % prop), 'tailored' ):
-                    _callable = eval('fabfile.%s' % prop)
-                    callable_source = inspect.getsource(_callable)
-                    fab_tasks[prop] = (pickle.dumps(callable_source))
-                elif hasattr( eval('fabfile.%s' % prop), 'dependency' ):
-                    _callable = eval('fabfile.%s' % prop)
-                    callable_source = inspect.getsource(_callable)
-                    fab_dependencies[prop] = (pickle.dumps(callable_source))
-            # Else just use the value
-            else:
-                fab_dict[prop] = eval('fabfile.%s' % prop)
+            for prop in fab_props:
+                if not prop in exclude_list:
+                    # If it's a callable, pickle it
+                    if hasattr( eval('fabfile.%s' % prop), '__call__' ):
+                        if hasattr( eval('fabfile.%s' % prop), 'tailored' ):
+                            _callable = eval('fabfile.%s' % prop)
+                            callable_source = inspect.getsource(_callable)
+                            fab_tasks[prop] = (pickle.dumps(callable_source))
+                        elif hasattr( eval('fabfile.%s' % prop), 'dependency' ):
+                            _callable = eval('fabfile.%s' % prop)
+                            callable_source = inspect.getsource(_callable)
+                            fab_dependencies[prop] = (pickle.dumps(callable_source))
+                    # Else just use the value
+                    else:
+                        fab_dict[prop] = eval('fabfile.%s' % prop)
     
-    #response = {}
-    response = simplejson.dumps(fab_dict)    
-    
-    return HttpResponse(response, mimetype='application/json', status=200)
+            response = simplejson.dumps(fab_dict)    
+            return HttpResponse(response, mimetype='application/json', status=200)
+
+        else:
+            return HttpResponse("API Key Not Recognized", status=403)
+    else:
+        return HttpResponse("API Key Required", status=403)
 
 
 @csrf_exempt    
