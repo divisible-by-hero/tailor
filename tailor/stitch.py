@@ -44,9 +44,9 @@ class Shirt:
         for command in commands:
             print command
             try:
-                yo_dog = fab_exec(eval("fab_temp." + command))
+                output = fab_exec(eval("fab_temp." + command))
                 print("output")
-                print yo_dog
+                print output
             except AttributeError:
                 return False
         return True
