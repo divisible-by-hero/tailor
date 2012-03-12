@@ -105,8 +105,20 @@ def fab(request):
             #Set Host via POST Data
             env.hosts = _input['hosts']
             
+            import StringIO
+            file = open("fabric_stuff.py", "w")
+            new_string = ""
+            
+            for _varname, _var in client_dict['env'].iteritems():
+                new_string = new_string + "env.%s = '%s'" % (_varname, _var) + "\n"
+            
+            new_string = new_string + "\n\n"
+            for task, task_func in client_dict['tasks'].iteritems():
+                new_string = new_string + pickle.loads(str(task_func))
+        
+            file.write(new_string)
+            file.close()
 
-    
             #Unpickle functions
             unpickeled_functions = {}
             #print client_dict['tasks']
