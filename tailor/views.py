@@ -6,18 +6,19 @@ import urllib2
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 
 from fabric.api import *
 
+from tailor.decorators import tailored
 
-
-def tailored(request):
+def schema(request):
     '''
     Parses the project fabfile and returns API listing
     the available commands.  Commands are made available by
     adding the @tailored (name?) decorator to a fabric function.
     '''
-    
+
     #The directory that hold the fabfile needs to be added to the python path
     from conf import fabfile
     
@@ -25,17 +26,22 @@ def tailored(request):
     
     # Exclude certain properties in the fabfile
     # TODO: replace by opting in with decorator, instead of opting everything else out
-    exclude_list = ['__builtins__', '__doc__', '__file__', '__name__', '__package__', 'abort', 'cd', 'execute', 'fastprint', 'get', 'glob', 'hide', 'hosts',  'lcd',  'local',  'open_shell', 'os', 'output', 'parallel', 'path',  'prefix', 'prompt', 'put', 'puts', 'reboot',  'requests', 'require', 'roles', 'run', 'runs_once', 'serial', 'settings', 'setup', 'show', 'simplejson', 'ssh', 'sudo', 'task', 'time', 'warn', 'with_settings', 'with_statement']
+    exclude_list = ['__builtins__', '__doc__', '__file__', '__name__', '__package__', 'abort', 'cd', 'execute', 'fastprint', 'get', 'glob', 'hide', 'hosts',  'lcd',  'local',  'open_shell', 'os', 'output', 'parallel', 'path',  'prefix', 'prompt', 'put', 'puts', 'reboot',  'requests', 'require', 'roles', 'run', 'runs_once', 'serial', 'settings', 'setup', 'show', 'simplejson', 'ssh', 'sudo', 'task', 'time', 'warn', 'with_settings', 'with_statement', 'paths',]
  
 
     fab_dict = {}
+    fab_tasks = {}
+    fab_dict['tasks'] = fab_tasks
     for prop in fab_props:
-        if not prop in exclude_list: # TODO: Only add to fab_dict opted in tasks
+        if not prop in exclude_list:
             # If it's a callable, pickle it
             if hasattr( eval('fabfile.%s' % prop), '__call__' ):
-                _callable = eval('fabfile.%s' % prop)
-                callable_source = inspect.getsource(_callable)
-                fab_dict[prop] = pickle.dumps(callable_source)
+                if hasattr( eval('fabfile.%s' % prop), 'tailored' ):
+                    #print prop
+                    _callable = eval('fabfile.%s' % prop)
+                    callable_source = inspect.getsource(_callable)
+                    #fab_tasks.append(pickle.dumps(callable_source))
+                    fab_tasks[prop] = (pickle.dumps(callable_source))
             # Else just use the value
             else:
                 fab_dict[prop] = eval('fabfile.%s' % prop)
@@ -44,16 +50,24 @@ def tailored(request):
     response = simplejson.dumps(fab_dict)    
     
     return HttpResponse(response, mimetype='application/json', status=200)
-    
+
+
+@csrf_exempt    
 def fab(request):
     '''
     Accepts JSON (and more later on?) data describing fabric commands
     and runs them if they exist and are allowed.
+
+    #Test it locally
+    curl --dump-header - -H "Content-Type: application/json" -X POST --data '{"hosts": ["server1.example.com"],"commands": ["alpha", "kick_apache"] }' http://localhost:8000/tailor/api/v1/fab/
+
+    # NOTE: This is all PoC at this point.  Lots of hard-coded values
+    # TODO: Seperate all this out to methods
     '''
     
     import fabric
+
     # Turn off output as to not write against stdout and stderr
-    
     fabric.state.output["status"] = False
     fabric.state.output["running"] = False
     fabric.state.output["user"] = False
@@ -62,44 +76,66 @@ def fab(request):
     fabric.state.output['stdout'] = False
     fabric.state.output['aborts'] = False
 
-    # NOTE: This is all PoC at this point.  Lots of hard-coded values    
 
-    try:
-        client_url = "http://localhost:8001/tailor/api/v1/tailored/"
-        client_data = urllib2.urlopen(client_url)
-        client_json = client_data.read()
-        client_dict = simplejson.loads(client_json)
+    if request.method == 'POST':
+        
+        try:
+            _input = request.raw_post_data
+            _input = simplejson.loads(request.raw_post_data)
+            #print _input['hosts']
+        #except JSONDecodeError, e:
+            #print "Couldn't parse JSON: %s" % e
+        except Exception, e:
+            print "Error: %s" % e
+        
+        try:
+            client_url = "http://localhost:8001/tailor/api/v1/schema/"
+            client_data = urllib2.urlopen(client_url)
+            client_json = client_data.read()
+            client_dict = simplejson.loads(client_json)
     
-        #Need this?
-        from fabric.api import env
+            #Need this?
+            from fabric.api import env
+    
+            # TODO: dynamically configure the 'env' dict from
+            #env = client_dict['env']
+            env.apache_bin_dir = "/etc/init.d/apache2"
+            env.user = 'fabric'
+                
+            #Set Host via POST Data
+            env.hosts = _input['hosts']
+            
 
-        # TODO: dynamically configure the 'env' dict from
-        #env = client_dict['env']
+    
+            #Unpickle functions
+            unpickeled_functions = {}
+            #print client_dict['tasks']
+            for task, task_func in client_dict['tasks'].iteritems():
+                unpickeled_functions[task] = pickle.loads(str(task_func))
 
-    
-        # TODO: removing these hard coded values.  either use 'env' values from client api or POST data
-        env.apache_bin_dir = "/etc/init.d/apache2"
-        env.hosts = ['host_name_removed']
-        env.user = 'fabric'
-    
-        # TODO: Get these function strings from the client api instead of hard-coded
-        picklefunction = "S'def kick_apache():\\n \"\"\" Kick the apache server for this app. \"\"\"\\n run(\\'sudo %s graceful\\' % env.apache_bin_dir)\\n'\np0\n."
-        stringfunction = pickle.loads(str(picklefunction))
-    
-        # TODO: Do this dynamically
-        function_dictionary = {}
-        exec stringfunction in globals(), function_dictionary
-        kick_apache = function_dictionary['kick_apache']
 
-        # TODO: Call the fabric tasks listed in the POST data
-        execute(kick_apache)
+            #Create functions on the fly
+            function_dictionary = {}
+            for task, task_func in unpickeled_functions.iteritems():
+                exec task_func in globals(), function_dictionary            
+
+            #Call the fabric tasks listed in the POST data
+            for command in _input['commands']:
+                execute(function_dictionary[command])
     
-        #respond
-        response_dict = {'success':True, 'message':"Commands Executed"}
-        response = simplejson.dumps(response_dict)
-        return HttpResponse(response, mimetype='application/json', status=200)
-    except:
-        response_dict = {'success':False, 'message':"Coudn't not execute commands"}
-        response = simplejson.dumps(response_dict)
-        return HttpResponse(response, mimetype='application/json', status=400)
+            #respond
+            response_dict = {'success':True, 'message':"Commands Executed"}
+            response = simplejson.dumps(response_dict)
+            return HttpResponse(response, mimetype='application/json', status=200)
+        except Exception, e:
+            print "Error: %s" % e
+            response_dict = {'success':False, 'message':"Coudn't not execute commands"}
+            response = simplejson.dumps(response_dict)
+            return HttpResponse(response, mimetype='application/json', status=400)
+    else:
+        response = "Method is not allow. Only POST is allowed"
+        return HttpResponse(response, status=400)
+
+
+
     
