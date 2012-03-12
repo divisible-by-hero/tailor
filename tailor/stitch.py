@@ -2,7 +2,7 @@ import random
 import pickle
 from fabric.api import execute as fab_exec
 
-class Shirt:
+class Sew:
     file_name = "fab_temp.py"
     
     def __init__(self):

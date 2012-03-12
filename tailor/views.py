@@ -104,13 +104,13 @@ def fab(request):
             #Set Host via POST Data
             env.hosts = _input['hosts']
             
-            shirt = Shirt()
-            shirt.setup()
-            shirt.add_vars(client_dict['env'])
-            shirt.add_methods(client_dict['dependencies'].iteritems())
-            shirt.add_methods(client_dict['tasks'].iteritems())
-            result = shirt.execute(_input['commands'])
-            shirt.cleanup()
+            sewing = Sew()
+            sewing.setup()
+            sewing.add_vars(client_dict['env'])
+            sewing.add_methods(client_dict['dependencies'].iteritems())
+            sewing.add_methods(client_dict['tasks'].iteritems())
+            result = sewing.execute(_input['commands'])
+            sewing.cleanup()
             if result:    
                 response_dict = {'success':True, 'message':"Commands Executed"}
                 response = simplejson.dumps(response_dict)
