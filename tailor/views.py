@@ -24,14 +24,18 @@ def schema(request):
         if request.REQUEST.get('key') in djangosettings.TAILOR_API_KEYS.values():
 
             #The directory that hold the fabfile needs to be added to the python path
+            # TODO: Make this configurable
             from conf import fabfile
     
             fab_props = dir(fabfile)
-    
-            # Exclude certain properties in the fabfile
-            # TODO: replace by opting in with decorator, instead of opting everything else out
-            exclude_list = ['__builtins__', '__doc__', '__file__', '__name__', '__package__', 'abort', 'cd', 'execute', 'fastprint', 'get', 'glob', 'hide', 'hosts',  'lcd',  'local',  'open_shell', 'os', 'output', 'parallel', 'path',  'prefix', 'prompt', 'put', 'puts', 'reboot',  'requests', 'require', 'roles', 'run', 'runs_once', 'serial', 'settings', 'setup', 'show', 'simplejson', 'ssh', 'sudo', 'task', 'time', 'warn', 'with_settings', 'with_statement', 'paths',]
- 
+                        
+            include_list = ['env']
+            good_props = []
+            for p in fab_props:
+                if hasattr( eval('fabfile.%s' % p), 'tailored' ) or \
+                    hasattr( eval('fabfile.%s' % p), 'dependency' ) or \
+                    p in include_list:
+                        good_props.append(p)
 
             fab_dict = {}
             fab_tasks = []
@@ -39,28 +43,27 @@ def schema(request):
             fab_dict['tasks'] = fab_tasks
             fab_dict['dependencies'] = fab_dependencies
     
-            for prop in fab_props:
-                if not prop in exclude_list:
-                    # If it's a callable, pickle it
-                    if hasattr( eval('fabfile.%s' % prop), '__call__' ):
-                        if hasattr( eval('fabfile.%s' % prop), 'tailored' ):
-                            task = {}
-                            _callable = eval('fabfile.%s' % prop)
-                            callable_source = inspect.getsource(_callable)
-                            task[prop] = (pickle.dumps(callable_source))
-                            task['docstring'] = _callable.__doc__
-                            fab_tasks.append(task)
-                        elif hasattr( eval('fabfile.%s' % prop), 'dependency' ):
-                            task = {}
-                            _callable = eval('fabfile.%s' % prop)
-                            callable_source = inspect.getsource(_callable)
-                            task[prop] = (pickle.dumps(callable_source))
-                            task['docstring'] = _callable.__doc__
-                            fab_dependencies.append(task)
+            for prop in good_props:
+                # If it's a callable, pickle it
+                if hasattr( eval('fabfile.%s' % prop), '__call__' ):
+                    if hasattr( eval('fabfile.%s' % prop), 'tailored' ):
+                        task = {}
+                        _callable = eval('fabfile.%s' % prop)
+                        callable_source = inspect.getsource(_callable)
+                        task[prop] = (pickle.dumps(callable_source))
+                        task['docstring'] = _callable.__doc__
+                        fab_tasks.append(task)
+                    elif hasattr( eval('fabfile.%s' % prop), 'dependency' ):
+                        task = {}
+                        _callable = eval('fabfile.%s' % prop)
+                        callable_source = inspect.getsource(_callable)
+                        task[prop] = (pickle.dumps(callable_source))
+                        task['docstring'] = _callable.__doc__
+                        fab_dependencies.append(task)
 
-                    # Else just use the value
-                    else:
-                        fab_dict[prop] = eval('fabfile.%s' % prop)
+                # Else just use the value
+                else:
+                    fab_dict[prop] = eval('fabfile.%s' % prop)
     
             response = simplejson.dumps(fab_dict)    
             return HttpResponse(response, mimetype='application/json', status=200)
