@@ -114,19 +114,23 @@ def fab(request):
     
             #Unpickle functions
             unpickeled_functions = {}
-            #print client_dict['tasks']
             for task, task_func in client_dict['tasks'].iteritems():
                 unpickeled_functions[task] = pickle.loads(str(task_func))
+            for task, task_func in client_dict['dependencies'].iteritems():
+                unpickeled_functions[task] = pickle.loads(str(task_func))
+
 
 
             #Create functions on the fly
             function_dictionary = {}
             for task, task_func in unpickeled_functions.iteritems():
-                exec task_func in globals(), function_dictionary            
+                exec task_func in globals(), function_dictionary
+
 
             #Call the fabric tasks listed in the POST data
             for command in _input['commands']:
                 execute(function_dictionary[command])
+                #function_dictionary[command]
     
             #respond
             response_dict = {'success':True, 'message':"Commands Executed"}
