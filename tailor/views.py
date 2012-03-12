@@ -104,10 +104,9 @@ def fab(request):
             #Set Host via POST Data
             env.hosts = _input['hosts']
             
-            import StringIO
             file = open("fabric_stuff.py", "w")
             new_string = ""
-            new_string = new_string + "from fabric.api import * \n\n\nimport fabric\n\n\n"
+            new_string = new_string + "from fabric.api import *\nfrom tailor.decorators import *\n\n\nimport fabric\n\n\n"
             
             
             new_string = new_string + '''fabric.state.output["status"] = False\nfabric.state.output["running"] = False\nfabric.state.output["user"] = False\nfabric.state.output["warnings"] = False\nfabric.state.output["stderr"] = False\nfabric.state.output['stdout'] = False\nfabric.state.output['aborts'] = False\n\n'''
@@ -134,8 +133,12 @@ def fab(request):
             import fabric_stuff
 
             for command in _input['commands']:
-                execute(eval("fabric_stuff." + command))
-
+                try:
+                    execute(eval("fabric_stuff." + command))
+                except AttributeError:
+                    response_dict = {'success': False, 'message': "Method does not exist."}
+                    response = simplejson.dumps(response_dict)
+                    return HttpResponse(response, mimetype='application/json', status=400)
             import os
             os.remove("fabric_stuff.py")
 
