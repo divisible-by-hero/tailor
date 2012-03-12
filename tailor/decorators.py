@@ -1,3 +1,8 @@
+'''
+Decorator methods to allow access from the Tailor API
+'''
+
+
 def tailored(func):
     ''' This decorator marks a fabric method as being viewable to tailor.'''
     func.tailored = True
