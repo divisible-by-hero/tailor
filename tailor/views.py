@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from tailor.stitch import Shirt
+from tailor.stitch import Sew
 from fabric.api import *
 
 from tailor.decorators import tailored
