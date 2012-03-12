@@ -50,14 +50,16 @@ def schema(request):
                         task = {}
                         _callable = eval('fabfile.%s' % prop)
                         callable_source = inspect.getsource(_callable)
-                        task[prop] = (pickle.dumps(callable_source))
+                        task['name'] = prop
+                        task['task'] = (pickle.dumps(callable_source))
                         task['docstring'] = _callable.__doc__
                         fab_tasks.append(task)
                     elif hasattr( eval('fabfile.%s' % prop), 'dependency' ):
                         task = {}
                         _callable = eval('fabfile.%s' % prop)
                         callable_source = inspect.getsource(_callable)
-                        task[prop] = (pickle.dumps(callable_source))
+                        task['name'] = prop
+                        task['task'] = (pickle.dumps(callable_source))
                         task['docstring'] = _callable.__doc__
                         fab_dependencies.append(task)
 
