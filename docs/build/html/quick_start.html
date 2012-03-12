@@ -62,11 +62,13 @@
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="client-installation">
+<h3>Client Installation<a class="headerlink" href="#client-installation" title="Permalink to this headline">¶</a></h3>
 <p>To install Tailor simply install via pip:</p>
 <div class="highlight-python"><pre>pip install tailor</pre>
 </div>
 <p>Add application to installed apps:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">INSTALLED_APPS</span> <span class="o">+=</span> <span class="p">(</span>
     <span class="s">&#39;tailor&#39;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
@@ -77,6 +79,65 @@
     <span class="n">url</span><span class="p">(</span><span class="s">r&#39;^tailor/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s">&#39;tailor.urls&#39;</span><span class="p">)),</span>
 <span class="p">)</span>
 </pre></div>
+</div>
+<p>Add <tt class="docutils literal"><span class="pre">TAILOR_FABFILE_PATH</span></tt>, a path to your fabfile, to your Django settings file.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">TAILOR_FABRIC_PATH</span> <span class="o">=</span> <span class="s">&quot;/path/to/your/fabfile.py&quot;</span>
+</pre></div>
+</div>
+<p>Add <tt class="docutils literal"><span class="pre">TAILOR_API_KEYS</span></tt>, a dictionary of accepted keys, to your Django settings file.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">TAILOR_API_KEYS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;dashboard&#39;</span><span class="p">:</span><span class="s">&#39;XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX&#39;</span><span class="p">,</span>
+    <span class="s">&#39;hubot&#39;</span><span class="p">:</span><span class="s">&#39;YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY&#39;</span><span class="p">,</span>
+    <span class="s">&#39;arduinio&#39;</span><span class="p">:</span><span class="s">&#39;ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Tailor includes a simple alphanumeric key generator.  <tt class="docutils literal"><span class="pre">from</span> <span class="pre">tailor</span> <span class="pre">import</span> <span class="pre">keygen</span></tt> then run <tt class="docutils literal"><span class="pre">keygen.generate(32)</span></tt></p>
+</div>
+<p>In your fabfile, <tt class="docutils literal"><span class="pre">from</span> <span class="pre">tailor.client</span> <span class="pre">import</span> <span class="pre">tailored</span></tt>.  To make Fabric commands available to Tailor, add the <tt class="docutils literal"><span class="pre">&#64;tailored</span></tt> decorator to any Fabric function.
+For functions that may be used by fabric tasks, but shouldn&#8217;t be directly callable via the api, add the <tt class="docutils literal"><span class="pre">&#64;dependency</span></tt> decorator.</p>
+<p>Returns a list of the available Fabric commands, including docstrings and required parameters
+<tt class="docutils literal"><span class="pre">/tailor/api/schema/?key=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</span></tt>
+Method: GET</p>
+</div>
+<div class="section" id="server-installation">
+<h3>Server Installation<a class="headerlink" href="#server-installation" title="Permalink to this headline">¶</a></h3>
+<p>Run Fabric commands
+/tailor/api/fab/
+Method: POST</p>
+<p>POST DATA (for a remote host):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;hosts&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s">&#39;http://server1.example.com&#39;</span><span class="p">,</span>
+        <span class="s">&#39;http://server2.example.com&#39;</span><span class="p">,</span>
+        <span class="s">&#39;http://server3.example.com&#39;</span>
+    <span class="p">],</span>
+    <span class="s">&#39;commands&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s">&#39;command&#39;</span><span class="p">:</span> <span class="s">&#39;alpha&#39;</span><span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s">&#39;command&#39;</span><span class="p">:</span> <span class="s">&#39;deploy&#39;</span><span class="p">,</span>
+            <span class="s">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s">&#39;0.96&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Fixed issue #31&#39;</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s">&#39;apikey&#39;</span><span class="p">:</span> <span class="s">&#39;XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>POST DATA (for the same host):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;hosts&#39;</span><span class="p">:</span> <span class="s">&#39;self&#39;</span><span class="p">,</span>
+    <span class="s">&#39;commands&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s">&#39;command&#39;</span><span class="p">:</span> <span class="s">&#39;production&#39;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">&#39;command&#39;</span><span class="p">:</span> <span class="s">&#39;restart_apache&#39;</span><span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -91,7 +152,11 @@
   <ul>
 <li><a class="reference internal" href="#">Quick Start</a><ul>
 <li><a class="reference internal" href="#requirements">Requirements</a></li>
-<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#client-installation">Client Installation</a></li>
+<li><a class="reference internal" href="#server-installation">Server Installation</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

@@ -46,7 +46,8 @@ Add ``TAILOR_API_KEYS``, a dictionary of accepted keys, to your Django settings 
     }
 
 .. note::
-Tailor includes a simple alphanumeric key generator.  ``from tailor import keygen`` then run ``keygen.generate(32)``
+
+    Tailor includes a simple alphanumeric key generator.  ``from tailor import keygen`` then run ``keygen.generate(32)``
 
 In your fabfile, ``from tailor.client import tailored``.  To make Fabric commands available to Tailor, add the ``@tailored`` decorator to any Fabric function.
 For functions that may be used by fabric tasks, but shouldn't be directly callable via the api, add the ``@dependency`` decorator.
