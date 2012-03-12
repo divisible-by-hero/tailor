@@ -34,8 +34,8 @@ def schema(request):
  
 
             fab_dict = {}
-            fab_tasks = {}
-            fab_dependencies = {}
+            fab_tasks = []
+            fab_dependencies = []
             fab_dict['tasks'] = fab_tasks
             fab_dict['dependencies'] = fab_dependencies
     
@@ -44,13 +44,20 @@ def schema(request):
                     # If it's a callable, pickle it
                     if hasattr( eval('fabfile.%s' % prop), '__call__' ):
                         if hasattr( eval('fabfile.%s' % prop), 'tailored' ):
+                            task = {}
                             _callable = eval('fabfile.%s' % prop)
                             callable_source = inspect.getsource(_callable)
-                            fab_tasks[prop] = (pickle.dumps(callable_source))
+                            task[prop] = (pickle.dumps(callable_source))
+                            task['docstring'] = _callable.__doc__
+                            fab_tasks.append(task)
                         elif hasattr( eval('fabfile.%s' % prop), 'dependency' ):
+                            task = {}
                             _callable = eval('fabfile.%s' % prop)
                             callable_source = inspect.getsource(_callable)
-                            fab_dependencies[prop] = (pickle.dumps(callable_source))
+                            task[prop] = (pickle.dumps(callable_source))
+                            task['docstring'] = _callable.__doc__
+                            fab_dependencies.append(task)
+
                     # Else just use the value
                     else:
                         fab_dict[prop] = eval('fabfile.%s' % prop)
