@@ -2,6 +2,7 @@ import pickle
 import inspect
 import simplejson
 import urllib2
+import sys
 
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -92,7 +93,7 @@ def fab(request):
             #print "Couldn't parse JSON: %s" % e
         except Exception, e:
             print "Error: %s" % e
-        
+                
         try:
             client_url = "http://localhost:8001/tailor/api/v1/schema/"
             client_data = urllib2.urlopen(client_url)
@@ -120,17 +121,37 @@ def fab(request):
                 unpickeled_functions[task] = pickle.loads(str(task_func))
 
 
+            #Create new module
+            import types
+            newfab_module = types.ModuleType('newfab')
+
+            def method(func, name):
+                return types.MethodType(func, name)
+
+                
 
             #Create functions on the fly
             function_dictionary = {}
             for task, task_func in unpickeled_functions.iteritems():
                 exec task_func in globals(), function_dictionary
+                setattr(newfab_module, task, function_dictionary[task])
+            
 
+            #sys.modules['newfab'] = newfab_module
+            sys.modules.setdefault('newfab', newfab_module)
+            #from newfab import alpha, kick_apache, set_hosts
+            from newfab import alpha, kick_apache, set_hosts
+            #set_hosts('alpha')
 
+            
+            #alpha()
+            #kick_apache()
             #Call the fabric tasks listed in the POST data
-            for command in _input['commands']:
-                execute(function_dictionary[command])
-                #function_dictionary[command]
+            #for command in _input['commands']:
+                #foo = function_dictionary[command]
+                #foo()
+
+
     
             #respond
             response_dict = {'success':True, 'message':"Commands Executed"}
