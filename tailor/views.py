@@ -73,15 +73,7 @@ def fab(request):
     import fabric
 
     # Turn off output as to not write against stdout and stderr
-    '''
-    fabric.state.output["status"] = False
-    fabric.state.output["running"] = False
-    fabric.state.output["user"] = False
-    fabric.state.output["warnings"] = False
-    fabric.state.output["stderr"] = False
-    fabric.state.output['stdout'] = False
-    fabric.state.output['aborts'] = False
-    '''
+    
 
     if request.method == 'POST':
         
@@ -114,7 +106,13 @@ def fab(request):
             import StringIO
             file = open("fabric_stuff.py", "w")
             new_string = ""
-            new_string = new_string = "from fabric.api import * \n\n\n"
+            new_string = new_string + "from fabric.api import * \n\n\nimport fabric\n\n\n"
+            
+            
+            new_string = new_string + '''fabric.state.output["status"] = False\nfabric.state.output["running"] = False\nfabric.state.output["user"] = False\nfabric.state.output["warnings"] = False\nfabric.state.output["stderr"] = False\nfabric.state.output['stdout'] = False\nfabric.state.output['aborts'] = False\n\n'''
+            
+            
+            
             for _varname, _var in client_dict['env'].iteritems():
                 if isinstance(_var, str):
                     new_string = new_string + "env.%s = \"%s\"" % (_varname, _var) + "\n"
@@ -138,7 +136,7 @@ def fab(request):
                 execute(eval("fabric_stuff." + command))
 
             import os
-            os.remove("fabric_stuff.py")
+            #os.remove("fabric_stuff.py")
             #respond
             response_dict = {'success':True, 'message':"Commands Executed"}
             response = simplejson.dumps(response_dict)
