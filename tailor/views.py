@@ -2,6 +2,7 @@ import pickle
 import inspect
 import simplejson
 import urllib2
+import sys
 
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -31,17 +32,22 @@ def schema(request):
 
     fab_dict = {}
     fab_tasks = {}
+    fab_dependencies = {}
     fab_dict['tasks'] = fab_tasks
+    fab_dict['dependencies'] = fab_dependencies
+    
     for prop in fab_props:
         if not prop in exclude_list:
             # If it's a callable, pickle it
             if hasattr( eval('fabfile.%s' % prop), '__call__' ):
                 if hasattr( eval('fabfile.%s' % prop), 'tailored' ):
-                    #print prop
                     _callable = eval('fabfile.%s' % prop)
                     callable_source = inspect.getsource(_callable)
-                    #fab_tasks.append(pickle.dumps(callable_source))
                     fab_tasks[prop] = (pickle.dumps(callable_source))
+                elif hasattr( eval('fabfile.%s' % prop), 'dependency' ):
+                    _callable = eval('fabfile.%s' % prop)
+                    callable_source = inspect.getsource(_callable)
+                    fab_dependencies[prop] = (pickle.dumps(callable_source))
             # Else just use the value
             else:
                 fab_dict[prop] = eval('fabfile.%s' % prop)
@@ -68,14 +74,7 @@ def fab(request):
     import fabric
 
     # Turn off output as to not write against stdout and stderr
-    fabric.state.output["status"] = False
-    fabric.state.output["running"] = False
-    fabric.state.output["user"] = False
-    fabric.state.output["warnings"] = False
-    fabric.state.output["stderr"] = False
-    fabric.state.output['stdout'] = False
-    fabric.state.output['aborts'] = False
-
+    
 
     if request.method == 'POST':
         
@@ -87,7 +86,7 @@ def fab(request):
             #print "Couldn't parse JSON: %s" % e
         except Exception, e:
             print "Error: %s" % e
-        
+                
         try:
             client_url = "http://localhost:8001/tailor/api/v1/schema/"
             client_data = urllib2.urlopen(client_url)
@@ -95,37 +94,55 @@ def fab(request):
             client_dict = simplejson.loads(client_json)
     
             #Need this?
-            from fabric.api import env
+            from fabric.api import execute
     
             # TODO: dynamically configure the 'env' dict from
             #env = client_dict['env']
-            env.apache_bin_dir = "/etc/init.d/apache2"
-            env.user = 'fabric'
+            #env.apache_bin_dir = "/etc/init.d/apache2"
+            #env.user = 'fabric'
                 
             #Set Host via POST Data
             env.hosts = _input['hosts']
             
-
-    
-            #Unpickle functions
-            unpickeled_functions = {}
-            #print client_dict['tasks']
+            import StringIO
+            file = open("fabric_stuff.py", "w")
+            new_string = ""
+            new_string = new_string + "from fabric.api import * \n\n\nimport fabric\n\n\n"
+            
+            
+            new_string = new_string + '''fabric.state.output["status"] = False\nfabric.state.output["running"] = False\nfabric.state.output["user"] = False\nfabric.state.output["warnings"] = False\nfabric.state.output["stderr"] = False\nfabric.state.output['stdout'] = False\nfabric.state.output['aborts'] = False\n\n'''
+            
+            
+            
+            for _varname, _var in client_dict['env'].iteritems():
+                if isinstance(_var, str):
+                    new_string = new_string + "env.%s = \"%s\"" % (_varname, _var) + "\n"
+                else:
+                    new_string = new_string + "env.%s = %s" % (_varname, _var) + "\n"
+            
+            new_string = new_string + "\n\n"
+            for dep, dep_func in client_dict['dependencies'].iteritems():
+                new_string = new_string + pickle.loads(str(dep_func))
+            
+            
+            new_string = new_string + "\n\n"
             for task, task_func in client_dict['tasks'].iteritems():
-                unpickeled_functions[task] = pickle.loads(str(task_func))
+                new_string = new_string + pickle.loads(str(task_func))
+        
+            file.write(new_string)
+            file.close()
+            import fabric_stuff
 
-
-            #Create functions on the fly
-            function_dictionary = {}
-            for task, task_func in unpickeled_functions.iteritems():
-                exec task_func in globals(), function_dictionary            
-
-            #Call the fabric tasks listed in the POST data
             for command in _input['commands']:
-                execute(function_dictionary[command])
-    
+                execute(eval("fabric_stuff." + command))
+
+            import os
+            os.remove("fabric_stuff.py")
+
             #respond
             response_dict = {'success':True, 'message':"Commands Executed"}
             response = simplejson.dumps(response_dict)
+            
             return HttpResponse(response, mimetype='application/json', status=200)
         except Exception, e:
             print "Error: %s" % e
