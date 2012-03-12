@@ -95,12 +95,12 @@ def fab(request):
             client_dict = simplejson.loads(client_json)
     
             #Need this?
-            from fabric.api import env
+            from fabric.api import *
     
             # TODO: dynamically configure the 'env' dict from
             #env = client_dict['env']
-            env.apache_bin_dir = "/etc/init.d/apache2"
-            env.user = 'fabric'
+            #env.apache_bin_dir = "/etc/init.d/apache2"
+            #env.user = 'fabric'
                 
             #Set Host via POST Data
             env.hosts = _input['hosts']
@@ -108,9 +108,12 @@ def fab(request):
             import StringIO
             file = open("fabric_stuff.py", "w")
             new_string = ""
-            
+            new_string = new_string = "from fabric.api import * \n\n\n"
             for _varname, _var in client_dict['env'].iteritems():
-                new_string = new_string + "env.%s = '%s'" % (_varname, _var) + "\n"
+                if isinstance(_var, str):
+                    new_string = new_string + "env.%s = '%s'" % (_varname, _var) + "\n"
+                else:
+                    new_string = new_string + "env.%s = %s" % (_varname, _var) + "\n"
             
             new_string = new_string + "\n\n"
             for task, task_func in client_dict['tasks'].iteritems():
@@ -118,26 +121,29 @@ def fab(request):
         
             file.write(new_string)
             file.close()
-
+            from fabric_stuff import *
+            execute(alpha)
+            execute(kick_apache)
             #Unpickle functions
-            unpickeled_functions = {}
+            #unpickeled_functions = {}
             #print client_dict['tasks']
-            for task, task_func in client_dict['tasks'].iteritems():
-                unpickeled_functions[task] = pickle.loads(str(task_func))
+            #for task, task_func in client_dict['tasks'].iteritems():
+            #    unpickeled_functions[task] = pickle.loads(str(task_func))
 
 
             #Create functions on the fly
-            function_dictionary = {}
-            for task, task_func in unpickeled_functions.iteritems():
-                exec task_func in globals(), function_dictionary            
+            #function_dictionary = {}
+            #for task, task_func in unpickeled_functions.iteritems():
+            #    exec task_func in globals(), function_dictionary            
 
             #Call the fabric tasks listed in the POST data
-            for command in _input['commands']:
-                execute(function_dictionary[command])
+            #for command in _input['commands']:
+            #    execute(function_dictionary[command])
     
             #respond
-            response_dict = {'success':True, 'message':"Commands Executed"}
-            response = simplejson.dumps(response_dict)
+            #response_dict = {'success':True, 'message':"Commands Executed"}
+            #response = simplejson.dumps(response_dict)
+            
             return HttpResponse(response, mimetype='application/json', status=200)
         except Exception, e:
             print "Error: %s" % e
