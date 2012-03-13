@@ -42,14 +42,20 @@ class Sew:
         
     def execute(self, commands):
         import fab_temp
+        param_dict = {}
+        #fab_exec(eval("fab_temp." + "test_func"), eval("foo")="poop")
         for command in commands:
-            print command
-            try:
-                output = fab_exec(eval("fab_temp." + command))
-                print("output")
-                print output
-            except AttributeError:
-                return False
+            # Capture command name
+            exe_command = command['command']
+            # Capture params and pack them in a dict.
+            for param in command['params']:
+                param_dict[param['name']] = param['value']
+            
+        try:
+            # Pass in a dict and eval.
+            output = fab_exec(eval("fab_temp." + exe_command), **param_dict)
+        except AttributeError:
+            return False
         return True
         
     def cleanup(self):

@@ -101,6 +101,7 @@ def fab(request):
             _input = simplejson.loads(request.raw_post_data)
             api_key = _input['api_key']
             schema_url = _input['schema_url']
+            print _input['commands']
         except Exception, e:
             print "Error: %s" % e
                 
