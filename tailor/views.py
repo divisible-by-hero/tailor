@@ -44,24 +44,45 @@ def schema(request):
             fab_dict['dependencies'] = fab_dependencies
     
             for prop in good_props:
-                # If it's a callable, pickle it
-                if hasattr( eval('fabfile.%s' % prop), '__call__' ):
-                    if hasattr( eval('fabfile.%s' % prop), 'tailored' ):
-                        task = {}
-                        _callable = eval('fabfile.%s' % prop)
-                        callable_source = inspect.getsource(_callable)
-                        task['name'] = prop
-                        task['task'] = (pickle.dumps(callable_source))
-                        task['docstring'] = _callable.__doc__
-                        fab_tasks.append(task)
-                    elif hasattr( eval('fabfile.%s' % prop), 'dependency' ):
-                        task = {}
-                        _callable = eval('fabfile.%s' % prop)
-                        callable_source = inspect.getsource(_callable)
-                        task['name'] = prop
-                        task['task'] = (pickle.dumps(callable_source))
-                        task['docstring'] = _callable.__doc__
-                        fab_dependencies.append(task)
+                if hasattr( eval('fabfile.%s' % prop), 'tailored' ):
+                    task = {}
+                    _callable = eval('fabfile.%s' % prop)
+                    callable_source = inspect.getsource(_callable)
+                    task['name'] = prop
+                    task['task'] = (pickle.dumps(callable_source))
+                    task['docstring'] = _callable.__doc__
+
+                    #arguments, defaults
+                    argspecs = inspect.getargspec(_callable)
+                    arguments = []
+                    for index, argument in enumerate(argspecs.args):
+                        _argument = {}
+                        _argument['arg'] = argument
+                        diff = (len(argspecs.args) - len(argspecs.defaults))
+                        if argspecs.defaults and index >= diff:
+                            _argument['default'] = argspecs.defaults[index - diff]
+                        arguments.append(_argument)
+                    task['arguments'] = arguments
+
+                    # *args and *kwargs
+                    if argspecs.varargs:
+                        task['varargs'] = True
+                    else:
+                        task['varargs'] = False
+                        
+                    if argspecs.keywords:
+                        task['kwargs'] = True
+                    else:
+                        task['kwargs'] = False
+                    fab_tasks.append(task)
+                elif hasattr( eval('fabfile.%s' % prop), 'dependency' ):
+                    task = {}
+                    _callable = eval('fabfile.%s' % prop)
+                    callable_source = inspect.getsource(_callable)
+                    task['name'] = prop
+                    task['task'] = (pickle.dumps(callable_source))
+                    task['docstring'] = _callable.__doc__
+                    fab_dependencies.append(task)
 
                 # Else just use the value
                 else:
