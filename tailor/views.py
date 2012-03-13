@@ -3,6 +3,8 @@ import inspect
 import simplejson
 import urllib2
 import sys
+import imp
+import os
 
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -14,21 +16,28 @@ from fabric.api import *
 from tailor.decorators import tailored
 
 def schema(request):
-    '''
+    """
     Parses the project fabfile and returns API listing
     the available commands.  Commands are made available by
     adding the @tailored (name?) decorator to a fabric function.
-    '''
+    """
 
     if request.REQUEST.get('key'):
         if request.REQUEST.get('key') in djangosettings.TAILOR_API_KEYS.values():
 
-            #The directory that hold the fabfile needs to be added to the python path
-            # TODO: Make this configurable
-            from conf import fabfile
+            # TODO: Handle for ImportErrors and dynamically find and load
+            # any modules the fabfile requires
+            
+            # Load the fabfile and add its dir to sys.path
+            fabfile_directory = os.path.dirname(djangosettings.TAILOR_FABFILE_PATH)
+            sys.path.append(fabfile_directory)
+            try:
+                fabfile = imp.load_source('fabfile', djangosettings.TAILOR_FABFILE_PATH)
+            except ImportError, e:
+                print e
     
-            fab_props = dir(fabfile)
-                        
+            # Complile list properties to be included in api
+            fab_props = dir(fabfile)            
             include_list = ['env']
             good_props = []
             for p in fab_props:
@@ -42,7 +51,8 @@ def schema(request):
             fab_dependencies = []
             fab_dict['tasks'] = fab_tasks
             fab_dict['dependencies'] = fab_dependencies
-        
+
+            # Build dict of fabric tasks and properties
             for prop in good_props:
                 #If Fabric Task
                 if hasattr( eval('fabfile.%s' % prop), 'tailored' ):
@@ -63,9 +73,16 @@ def schema(request):
 
 
 def parse_function(prop, fabfile):
+    """
+    Accepts a callable property of the fabfile,
+    parses it and returns a dictionary describing the
+    fabric task function.
+    """
     task = {}
     _callable = eval('fabfile.%s' % prop)
     callable_source = inspect.getsource(_callable)
+    
+    
     task['name'] = prop
     task['task'] = (pickle.dumps(callable_source))
     task['docstring'] = _callable.__doc__
@@ -123,7 +140,6 @@ def fab(request):
             _input = simplejson.loads(request.raw_post_data)
             api_key = _input['api_key']
             schema_url = _input['schema_url']
-            print _input['commands']
         except Exception, e:
             print "Error: %s" % e
                 
@@ -139,10 +155,10 @@ def fab(request):
             sewing.add_vars(client_dict['env'])
             sewing.add_methods(client_dict['dependencies'])
             sewing.add_methods(client_dict['tasks'])
-            result = sewing.execute(_input['commands'])
+            result, response_list = sewing.execute(_input['commands'])
             sewing.cleanup()
             if result:    
-                response_dict = {'success':True, 'message':"Commands Executed"}
+                response_dict = {'success':True, 'message':"Commands Executed", 'responses': response_list}
                 response = simplejson.dumps(response_dict)
             
                 return HttpResponse(response, mimetype='application/json', status=200)
