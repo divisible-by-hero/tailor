@@ -35,7 +35,7 @@ Add tailor.urls to your url conf::
     
 Add ``TAILOR_FABFILE_PATH``, a path to your fabfile, to your Django settings file.::
 
-    TAILOR_FABRIC_PATH = "/path/to/your/fabfile.py"
+    TAILOR_FABFILE_PATH = "/path/to/your/fabfile.py"
 
 Add ``TAILOR_API_KEYS``, a dictionary of accepted keys, to your Django settings file.::
 
