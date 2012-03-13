@@ -32,7 +32,6 @@ class Sew:
         fabfile.close()
         
     def add_methods(self, method_list):
-        print method_list
         new_string = ""
         for method_task_dict in method_list:
             new_string = new_string + pickle.loads(str(method_task_dict['task'])) + "\n\n"
@@ -43,6 +42,7 @@ class Sew:
     def execute(self, commands):
         import fab_temp
         param_dict = {}
+        command_response = []
         for command in commands:
             # Capture command name
             exe_command = command['command']
@@ -50,12 +50,22 @@ class Sew:
             for param in command['params']:
                 param_dict[param['name']] = param['value']
             
-        try:
-            # Pass in a dict and eval.
-            output = fab_exec(eval("fab_temp." + exe_command), **param_dict)
-        except AttributeError:
-            return False
-        return True
+            try:
+                # Pass in a dict and eval.
+                command_dict = {}
+                import sys
+                from cStringIO import StringIO
+                old_stdout = sys.stdout
+                #sys.stdout = sys.stderr
+                sys.stdout = mystdout = StringIO()
+                output = fab_exec(eval("fab_temp." + exe_command), **param_dict)
+                sys.stdout = old_stdout
+                command_dict['command'] = exe_command
+                command_dict['response'] = mystdout.getvalue()
+                command_response.append(command_dict)
+            except AttributeError:
+                return False, command_response
+        return True, command_response
         
     def cleanup(self):
         import os

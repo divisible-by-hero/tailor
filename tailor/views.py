@@ -123,7 +123,6 @@ def fab(request):
             _input = simplejson.loads(request.raw_post_data)
             api_key = _input['api_key']
             schema_url = _input['schema_url']
-            print _input['commands']
         except Exception, e:
             print "Error: %s" % e
                 
@@ -139,10 +138,10 @@ def fab(request):
             sewing.add_vars(client_dict['env'])
             sewing.add_methods(client_dict['dependencies'])
             sewing.add_methods(client_dict['tasks'])
-            result = sewing.execute(_input['commands'])
+            result, response_list = sewing.execute(_input['commands'])
             sewing.cleanup()
             if result:    
-                response_dict = {'success':True, 'message':"Commands Executed"}
+                response_dict = {'success':True, 'message':"Commands Executed", 'responses': response_list}
                 response = simplejson.dumps(response_dict)
             
                 return HttpResponse(response, mimetype='application/json', status=200)
