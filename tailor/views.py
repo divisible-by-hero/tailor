@@ -101,28 +101,21 @@ def fab(request):
             _input = simplejson.loads(request.raw_post_data)
             api_key = _input['api_key']
             schema_url = _input['schema_url']
-            #print _input['hosts']
-        #except JSONDecodeError, e:
-            #print "Couldn't parse JSON: %s" % e
         except Exception, e:
             print "Error: %s" % e
                 
         try:
-            print api_key
-            print schema_url
             client_url = "%s?key=%s" % (schema_url, api_key)
-            print client_url
             client_data = urllib2.urlopen(client_url)
             client_json = client_data.read()
             client_dict = simplejson.loads(client_json)
-            print "YO"
             env.hosts = _input['hosts']
             
             sewing = Sew()
             sewing.setup()
             sewing.add_vars(client_dict['env'])
-            sewing.add_methods(client_dict['dependencies'].iteritems())
-            sewing.add_methods(client_dict['tasks'].iteritems())
+            sewing.add_methods(client_dict['dependencies'])
+            sewing.add_methods(client_dict['tasks'])
             result = sewing.execute(_input['commands'])
             sewing.cleanup()
             if result:    
