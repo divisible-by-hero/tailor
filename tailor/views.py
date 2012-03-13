@@ -42,48 +42,13 @@ def schema(request):
             fab_dependencies = []
             fab_dict['tasks'] = fab_tasks
             fab_dict['dependencies'] = fab_dependencies
-    
+        
             for prop in good_props:
+                #If Fabric Task
                 if hasattr( eval('fabfile.%s' % prop), 'tailored' ):
-                    task = {}
-                    _callable = eval('fabfile.%s' % prop)
-                    callable_source = inspect.getsource(_callable)
-                    task['name'] = prop
-                    task['task'] = (pickle.dumps(callable_source))
-                    task['docstring'] = _callable.__doc__
-
-                    #arguments, defaults
-                    argspecs = inspect.getargspec(_callable)
-                    arguments = []
-                    for index, argument in enumerate(argspecs.args):
-                        _argument = {}
-                        _argument['arg'] = argument
-                        diff = (len(argspecs.args) - len(argspecs.defaults))
-                        if argspecs.defaults and index >= diff:
-                            _argument['default'] = argspecs.defaults[index - diff]
-                        arguments.append(_argument)
-                    task['arguments'] = arguments
-
-                    # *args and *kwargs
-                    if argspecs.varargs:
-                        task['varargs'] = True
-                    else:
-                        task['varargs'] = False
-                        
-                    if argspecs.keywords:
-                        task['kwargs'] = True
-                    else:
-                        task['kwargs'] = False
-                    fab_tasks.append(task)
+                    fab_tasks.append(parse_function(prop, fabfile))
                 elif hasattr( eval('fabfile.%s' % prop), 'dependency' ):
-                    task = {}
-                    _callable = eval('fabfile.%s' % prop)
-                    callable_source = inspect.getsource(_callable)
-                    task['name'] = prop
-                    task['task'] = (pickle.dumps(callable_source))
-                    task['docstring'] = _callable.__doc__
-                    fab_dependencies.append(task)
-
+                    fab_dependencies.append(parse_function(prop, fabfile))
                 # Else just use the value
                 else:
                     fab_dict[prop] = eval('fabfile.%s' % prop)
@@ -96,6 +61,42 @@ def schema(request):
     else:
         return HttpResponse("API Key Required", status=403)
 
+
+def parse_function(prop, fabfile):
+    task = {}
+    _callable = eval('fabfile.%s' % prop)
+    callable_source = inspect.getsource(_callable)
+    task['name'] = prop
+    task['task'] = (pickle.dumps(callable_source))
+    task['docstring'] = _callable.__doc__
+
+    #arguments, defaults
+    argspecs = inspect.getargspec(_callable)
+    arguments = []
+    for index, argument in enumerate(argspecs.args):
+        _argument = {}
+        _argument['arg'] = argument
+        if argspecs.defaults:
+            diff = (len(argspecs.args) - len(argspecs.defaults))
+        else:
+            diff = -1
+        if argspecs.defaults and index >= diff:
+            _argument['default'] = argspecs.defaults[index - diff]
+        arguments.append(_argument)
+    task['arguments'] = arguments
+
+    # *args and *kwargs
+    if argspecs.varargs:
+        task['varargs'] = True
+    else:
+        task['varargs'] = False
+
+    if argspecs.keywords:
+        task['kwargs'] = True
+    else:
+        task['kwargs'] = False
+
+    return task
 
 @csrf_exempt    
 def fab(request):
