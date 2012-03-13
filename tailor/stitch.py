@@ -31,10 +31,11 @@ class Sew:
         fabfile.write(new_string)
         fabfile.close()
         
-    def add_methods(self, method_dict):
+    def add_methods(self, method_list):
+        print method_list
         new_string = ""
-        for method_name, method in method_dict:
-            new_string = new_string + pickle.loads(str(method)) + "\n\n"
+        for method_task_dict in method_list:
+            new_string = new_string + pickle.loads(str(method_task_dict['task'])) + "\n\n"
         fabfile = open(self.file_name, "a")
         fabfile.write(new_string)
         fabfile.close()
