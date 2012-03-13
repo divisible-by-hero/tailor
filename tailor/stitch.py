@@ -43,7 +43,6 @@ class Sew:
     def execute(self, commands):
         import fab_temp
         param_dict = {}
-        #fab_exec(eval("fab_temp." + "test_func"), eval("foo")="poop")
         for command in commands:
             # Capture command name
             exe_command = command['command']
