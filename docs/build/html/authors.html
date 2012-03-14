@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to Tailor &mdash; Tailor 0.1 documentation</title>
+    <title>Authors &mdash; Tailor 0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -25,8 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Tailor 0.1 documentation" href="#" />
-    <link rel="next" title="Quick Start" href="quick_start.html" /> 
+    <link rel="top" title="Tailor 0.1 documentation" href="index.html" />
+    <link rel="next" title="Tailor Decorators" href="decorators.html" />
+    <link rel="prev" title="Quick Start" href="quick_start.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,9 +37,12 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="quick_start.html" title="Quick Start"
+          <a href="decorators.html" title="Tailor Decorators"
              accesskey="N">next</a> |</li>
-        <li><a href="#">Tailor 0.1 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="quick_start.html" title="Quick Start"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Tailor 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -47,37 +51,13 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="welcome-to-tailor">
-<h1>Welcome to Tailor<a class="headerlink" href="#welcome-to-tailor" title="Permalink to this headline">¶</a></h1>
-<p>Tailor is a Python (Django) application designed to take your fabric commands, and make them executable from an API.  Tailor is built with modularity in mind by binding explicitly to the Fabric file you supply.  Fabric commands can be made accessible to the web API by adding the &#64;tailored decorator.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="quick_start.html#requirements">Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quick_start.html#installation">Installation</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="authors.html#core-authors">Core Authors</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="decorators.html">Tailor Decorators</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="decorators.html#tailored">&#64;tailored</a></li>
-<li class="toctree-l2"><a class="reference internal" href="decorators.html#dependency">&#64;dependency</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="api/server.html">Tailor Server API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/server.html#tailor-command-json">Tailor Command JSON</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section" id="feature-set">
-<h2>Feature Set<a class="headerlink" href="#feature-set" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="authors">
+<h1>Authors<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="core-authors">
+<h2>Core Authors<a class="headerlink" href="#core-authors" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Drop in fabfile</li>
-<li>Execute decorated functions through a HTTP based API.</li>
-<li>Key based authentication</li>
+<li>Garrett Pennington &#64;gpennington</li>
+<li>Derek Stegelman - &#64;dstegelman</li>
 </ul>
 </div>
 </div>
@@ -88,20 +68,23 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table Of Contents</a></h3>
+  <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to Tailor</a><ul>
-<li><a class="reference internal" href="#feature-set">Feature Set</a></li>
+<li><a class="reference internal" href="#">Authors</a><ul>
+<li><a class="reference internal" href="#core-authors">Core Authors</a></li>
 </ul>
 </li>
 </ul>
 
-  <h4>Next topic</h4>
+  <h4>Previous topic</h4>
   <p class="topless"><a href="quick_start.html"
-                        title="next chapter">Quick Start</a></p>
+                        title="previous chapter">Quick Start</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="decorators.html"
+                        title="next chapter">Tailor Decorators</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/index.txt"
+    <li><a href="_sources/authors.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -128,9 +111,12 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="quick_start.html" title="Quick Start"
+          <a href="decorators.html" title="Tailor Decorators"
              >next</a> |</li>
-        <li><a href="#">Tailor 0.1 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="quick_start.html" title="Quick Start"
+             >previous</a> |</li>
+        <li><a href="index.html">Tailor 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

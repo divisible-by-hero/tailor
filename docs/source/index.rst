@@ -13,6 +13,7 @@ Tailor is a Python (Django) application designed to take your fabric commands, a
    :maxdepth: 2
    
    quick_start
+   authors
    decorators
    api/server
 

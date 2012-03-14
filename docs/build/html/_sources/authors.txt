@@ -1,0 +1,10 @@
+=======
+Authors
+=======
+
+Core Authors
+============
+
+* Garrett Pennington @gpennington
+* Derek Stegelman - @dstegelman
+
