@@ -64,6 +64,8 @@ class Sew:
                 command_dict['response'] = mystdout.getvalue()
                 command_response.append(command_dict)
             except AttributeError:
+                response_dict = {'command': exe_command, "repsonse": "The command %s could not be found by the tailor fabric execution model." % exe_command}
+                command_response.append(response_dict)
                 return False, command_response
         return True, command_response
         

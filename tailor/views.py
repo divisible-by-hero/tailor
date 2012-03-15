@@ -134,6 +134,7 @@ def fab(request):
     
 
     if request.method == 'POST':
+        print request.raw_post_data
         
         try:
             _input = request.raw_post_data
@@ -159,9 +160,12 @@ def fab(request):
             sewing.cleanup()
             if result:    
                 response_dict = {'success':True, 'message':"Commands Executed", 'responses': response_list}
+                print response_dict
+                #from django.core import serializers
                 response = simplejson.dumps(response_dict)
-            
-                return HttpResponse(response, mimetype='application/json', status=200)
+                data = "hello"
+                return HttpResponse(data)
+                #return HttpResponse(response, mimetype='application/json', status=200)
             else:
                 response_dict = {'success':False, 'message':"Coudn't not execute commands"}
                 response = simplejson.dumps(response_dict)
