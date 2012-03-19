@@ -1,0 +1,1 @@
+TAILOR_TEMP_FABFILE_PATH = "/Users/garrett/Desktop/foo.py"
