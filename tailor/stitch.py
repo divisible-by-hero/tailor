@@ -2,13 +2,18 @@ import random
 import pickle
 from fabric.api import execute as fab_exec
 
+from django.conf import settings
+
+from tailor import defaults as tailor_defaults
+
 class Sew:
-    file_name = "fab_temp.py"
+    file_name = getattr(settings, 'TAILOR_TEMP_FABFILE_PATH', tailor_defaults.TAILOR_TEMP_FABFILE_PATH)
     
     def __init__(self):
         pass
         
     def setup(self):
+        
         fabfile = open(self.file_name, "w")
         new_string = ""
         new_string = new_string + "from fabric.api import *\nfrom tailor.decorators import *\n\n\nimport fabric\n\n\n"
@@ -71,5 +76,5 @@ class Sew:
         
     def cleanup(self):
         import os
-        os.remove("fab_temp.py")
+        os.remove(self.file_name)
         
