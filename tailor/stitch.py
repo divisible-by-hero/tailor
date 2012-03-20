@@ -49,7 +49,9 @@ class Sew:
         fabfile.close()
         
     def execute(self, commands):
+        # Don't like how this must match 'self.fabfile_module', but fine for now -G
         import tailor_fabfile
+        
         param_dict = {}
         command_response = []
         for command in commands:
