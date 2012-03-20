@@ -1,4 +1,3 @@
-import random
 import pickle
 import sys
 
@@ -21,7 +20,6 @@ class Sew:
         fabfile = open(self.fabfile_path, "w")
         new_string = ""
         new_string = new_string + "from fabric.api import *\nfrom tailor.decorators import *\n\n\nimport fabric\n\n\n"
-        
         
         new_string = new_string + '''fabric.state.output["status"] = True\nfabric.state.output["running"] = True\nfabric.state.output["user"] = True\nfabric.state.output["warnings"] = True\nfabric.state.output["stderr"] = True\nfabric.state.output['stdout'] = True\nfabric.state.output['aborts'] = False\n\n'''
         fabfile.write(new_string)
@@ -67,7 +65,6 @@ class Sew:
                 import sys
                 from cStringIO import StringIO
                 old_stdout = sys.stdout
-                #sys.stdout = sys.stderr
                 sys.stdout = mystdout = StringIO()
                 output = fab_exec(eval("%s.%s" % (self.fabfile_module, exe_command)), **param_dict)
                 sys.stdout = old_stdout
