@@ -1,20 +1,24 @@
 import random
 import pickle
+import sys
+
 from fabric.api import execute as fab_exec
-
 from django.conf import settings
-
 from tailor import defaults as tailor_defaults
 
 class Sew:
-    file_name = getattr(settings, 'TAILOR_TEMP_FABFILE_PATH', tailor_defaults.TAILOR_TEMP_FABFILE_PATH)
+    fabfile_module = 'tailor_fabfile'
+    fabfile_name = '%s.py' % fabfile_module
+    fabfile_dir  = getattr(settings, 'TAILOR_TEMP_DIR', tailor_defaults.TAILOR_TEMP_DIR)
+    fabfile_path = "%s%s" % (fabfile_dir, fabfile_name)
+    sys.path.append(fabfile_dir)
     
     def __init__(self):
         pass
         
     def setup(self):
         
-        fabfile = open(self.file_name, "w")
+        fabfile = open(self.fabfile_path, "w")
         new_string = ""
         new_string = new_string + "from fabric.api import *\nfrom tailor.decorators import *\n\n\nimport fabric\n\n\n"
         
@@ -32,7 +36,7 @@ class Sew:
                 new_string = new_string + "env.%s = %s" % (_varname, _var) + "\n"
         new_string = new_string + "\n\n"
         
-        fabfile = open(self.file_name, "a")
+        fabfile = open(self.fabfile_path, "a")
         fabfile.write(new_string)
         fabfile.close()
         
@@ -40,12 +44,12 @@ class Sew:
         new_string = ""
         for method_task_dict in method_list:
             new_string = new_string + pickle.loads(str(method_task_dict['task'])) + "\n\n"
-        fabfile = open(self.file_name, "a")
+        fabfile = open(self.fabfile_path, "a")
         fabfile.write(new_string)
         fabfile.close()
         
     def execute(self, commands):
-        import fab_temp
+        import tailor_fabfile
         param_dict = {}
         command_response = []
         for command in commands:
@@ -63,7 +67,7 @@ class Sew:
                 old_stdout = sys.stdout
                 #sys.stdout = sys.stderr
                 sys.stdout = mystdout = StringIO()
-                output = fab_exec(eval("fab_temp." + exe_command), **param_dict)
+                output = fab_exec(eval("%s.%s" % (self.fabfile_module, exe_command)), **param_dict)
                 sys.stdout = old_stdout
                 command_dict['command'] = exe_command
                 command_dict['response'] = mystdout.getvalue()
@@ -76,5 +80,5 @@ class Sew:
         
     def cleanup(self):
         import os
-        os.remove(self.file_name)
+        os.remove(self.fabfile_path)
         
