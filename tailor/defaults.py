@@ -1,1 +1,4 @@
-TAILOR_TEMP_DIR = "/Users/garrett/Desktop/"
+# Root of Django Project
+TAILOR_TEMP_DIR = "./"
+
+# ... Other Defaults ...
