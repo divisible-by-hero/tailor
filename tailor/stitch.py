@@ -12,7 +12,7 @@ class Sew:
     fabfile_dir  = getattr(settings, 'TAILOR_TEMP_DIR', tailor_defaults.TAILOR_TEMP_DIR)
     fabfile_path = "%s%s" % (fabfile_dir, fabfile_name)
     sys.path.append(fabfile_dir)
-    
+
     def __init__(self):
         pass
         
@@ -51,7 +51,7 @@ class Sew:
     def execute(self, commands):
         # TODO: Don't like how this must match 'self.fabfile_module', but fine for now -G
         import tailor_fabfile
-        
+
         param_dict = {}
         command_response = []
         for command in commands:
@@ -83,4 +83,8 @@ class Sew:
     def cleanup(self):
         import os
         os.remove(self.fabfile_path)
+        try:
+            os.remove("%sc" % self.fabfile_path)
+        except:
+            pass
         
