@@ -16,6 +16,7 @@ Tailor is a Python (Django) application designed to take your fabric commands, a
    authors
    decorators
    api/server
+   license
 
 
 
