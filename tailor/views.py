@@ -163,9 +163,7 @@ def fab(request):
                 print response_dict
                 #from django.core import serializers
                 response = simplejson.dumps(response_dict)
-                data = "hello"
-                return HttpResponse(data)
-                #return HttpResponse(response, mimetype='application/json', status=200)
+                return HttpResponse(response, mimetype='application/json', status=200)
             else:
                 response_dict = {'success':False, 'message':"Coudn't not execute commands"}
                 response = simplejson.dumps(response_dict)
