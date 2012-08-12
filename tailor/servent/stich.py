@@ -4,7 +4,7 @@ import sys
 
 from fabric.api import execute as fab_exec
 from django.conf import settings
-from tailor import defaults as tailor_defaults
+from tailor.servent import defaults as tailor_defaults
 
 class Sew:
     fabfile_module = 'tailor_fabfile'
