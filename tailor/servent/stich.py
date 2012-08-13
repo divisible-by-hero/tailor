@@ -20,7 +20,7 @@ class Sew:
         
         fabfile = open(self.fabfile_path, "w")
         new_string = ""
-        new_string = new_string + "from fabric.api import *\nfrom tailor.decorators import *\n\n\nimport fabric\n\n\n"
+        new_string = new_string + "from fabric.api import *\nfrom tailor.client.decorators import *\n\n\nimport fabric\n\n\n"
         
         
         new_string = new_string + '''fabric.state.output["status"] = True\nfabric.state.output["running"] = True\nfabric.state.output["user"] = True\nfabric.state.output["warnings"] = True\nfabric.state.output["stderr"] = True\nfabric.state.output['stdout'] = True\nfabric.state.output['aborts'] = False\n\n'''
