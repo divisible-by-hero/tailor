@@ -1,3 +1,5 @@
+from django.conf import settings as django_settings
+
 import simplejson
 import urllib2
 
@@ -47,3 +49,14 @@ class Project(models.Model):
             response_dict = {'success':False, 'message':"Coudn't not execute commands"}
             response = simplejson.dumps(response_dict)
             return HttpResponse(response, mimetype='application/json', status=400)
+            
+    def get_tasks(self):
+        try:            
+            client_url = "%s?key=%s" % (self.tailor_api, django_settings.TAILOR_CLIENT_KEY)
+            client_data = urllib2.urlopen(client_url)
+            client_json = client_data.read()
+            client_dict = simplejson.loads(client_json)
+            tasks = client_dict['tasks']
+            return tasks
+        except Exception, e:
+            print "Couldn't get client api because: %s" % e
