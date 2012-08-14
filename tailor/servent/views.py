@@ -13,7 +13,7 @@ def fab(request, object_id):
     and runs them if they exist and are allowed.
 
     #Test it locally
-    curl --dump-header - -H "Content-Type:application/json" -H "X_REQUESTED_WITH:XMLHttpRequest" -X POST --data '{"hosts": ["server1.example.com"],"commands": [{"command": "foo","params": []},{"command": "bar","params": []}], "api_key": "geM1hfBV6T4dDrAvzg7XxNM7BQAMCk3I", "schema_url": "http://localhost:8000/tailor/api/v1/schema/"}' http://localhost:8000/tailor2/api/v1/fab/
+    curl --dump-header - -H "Content-Type:application/json" -H "X_REQUESTED_WITH:XMLHttpRequest" -X POST --data '{"hosts": ["server1.example.com"],"commands": [{"command": "foo","params": []},{"command": "bar","params": []}], "api_key": "geM1hfBV6T4dDrAvzg7XxNM7BQAMCk3I"}' http://localhost:8000/tailor2/api/v1/fab/1
 
     # NOTE: This is all PoC at this point.  Lots of hard-coded values
     # TODO: Seperate all this out to methods
