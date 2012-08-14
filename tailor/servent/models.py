@@ -37,7 +37,6 @@ class Project(models.Model):
             sewing.cleanup()
             if result:    
                 response_dict = {'success':True, 'message':"Commands Executed", 'responses': response_list}
-                print response_dict
                 #from django.core import serializers
                 response = simplejson.dumps(response_dict)
                 return HttpResponse(response, mimetype='application/json', status=200)
@@ -53,7 +52,7 @@ class Project(models.Model):
             
     def get_tasks(self):
         try:            
-            client_url = "%s?key=%s" % (self.tailor_api, django_settings.TAILOR_CLIENT_KEY)
+            client_url = "%s?key=%s" % (self.tailor_api, self.tailor_key)
             client_data = urllib2.urlopen(client_url)
             client_json = client_data.read()
             client_dict = simplejson.loads(client_json)
