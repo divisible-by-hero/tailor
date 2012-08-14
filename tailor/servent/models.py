@@ -15,6 +15,7 @@ class Project(models.Model):
     slug = models.SlugField(max_length=255)
     
     tailor_api = models.CharField(max_length=255, blank=True, default='http://project/tailor/api/v1/schema/')
+    tailor_key = models.CharField(max_length=255, blank=True)
             
     def __unicode__(self):
         return str(self.name)
