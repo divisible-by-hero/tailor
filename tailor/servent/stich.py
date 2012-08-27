@@ -6,15 +6,15 @@ from django.conf import settings
 from tailor.servent import defaults as tailor_defaults
 
 class Sew:
-    fabfile_module = 'tailor_fabfile'
-    fabfile_name = '%s.py' % fabfile_module
-    fabfile_dir  = getattr(settings, 'TAILOR_TEMP_DIR', tailor_defaults.TAILOR_TEMP_DIR)
-    fabfile_path = "%s%s" % (fabfile_dir, fabfile_name)
-    sys.path.append(fabfile_dir)
 
-    def __init__(self):
-        pass
-        
+    def __init__(self, affix):
+        self.fabfile_module = 'tailor_fabfile'
+        fabfile_name = '%s.py' % self.fabfile_module
+        fabfile_dir  = getattr(settings, 'TAILOR_TEMP_DIR', tailor_defaults.TAILOR_TEMP_DIR)
+
+        self.fabfile_path = "%s%s" % (fabfile_dir, fabfile_name)
+        sys.path.append(fabfile_dir)        
+
     def setup(self):
         
         fabfile = open(self.fabfile_path, "w")
@@ -48,7 +48,8 @@ class Sew:
         
     def execute(self, commands):
         # TODO: Don't like how this must match 'self.fabfile_module', but fine for now -G
-        import tailor_fabfile
+        #import tailor_fabfile
+        tailor_fabfile = __import__('tailor_fabfile')
 
         param_dict = {}
         command_response = []

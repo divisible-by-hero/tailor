@@ -28,7 +28,7 @@ class Project(models.Model):
             client_dict = simplejson.loads(client_json)
             env.hosts = _input['hosts']
             
-            sewing = Sew()
+            sewing = Sew(self.slug)
             sewing.setup()
             sewing.add_vars(client_dict['env'])
             sewing.add_methods(client_dict['dependencies'])
