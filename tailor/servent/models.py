@@ -28,7 +28,7 @@ class Project(models.Model):
             client_dict = simplejson.loads(client_json)
             env.hosts = _input['hosts']
             
-            sewing = Sew()
+            sewing = Sew(self.slug)
             sewing.setup()
             sewing.add_vars(client_dict['env'])
             sewing.add_methods(client_dict['dependencies'])
@@ -41,12 +41,12 @@ class Project(models.Model):
                 response = simplejson.dumps(response_dict)
                 return HttpResponse(response, mimetype='application/json', status=200)
             else:
-                response_dict = {'success':False, 'message':"Coudn't not execute commands"}
+                response_dict = {'success':False, 'message':"No result from Fabric"}
                 response = simplejson.dumps(response_dict)
                 return HttpResponse(response, mimetype='application/json', status=400)
         except Exception, e:
             print "Error: %s" % e
-            response_dict = {'success':False, 'message':"Coudn't not execute commands"}
+            response_dict = {'success':False, 'message':"Could not execute commands"}
             response = simplejson.dumps(response_dict)
             return HttpResponse(response, mimetype='application/json', status=400)
             
