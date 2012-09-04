@@ -1,6 +1,6 @@
 #Tailor
 Tailor is a Django app that let's you run Fabric commands via a web based API.
-It includes a built-in client in the Django Admin,but provides the tools to make limitless custom clients.
+It includes a built-in client in the Django Admin, but provides the tools to make limitless custom clients.
 
 ###Running Tailor on a seperate host
 Optimally, Tailor should be installed locally or on a different host than the target host.  In other words, a project running Tailor on Host1 will execute Fabric commands on Host2, Host3, Host4.
