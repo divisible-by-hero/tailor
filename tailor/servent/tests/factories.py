@@ -7,7 +7,7 @@ from tailor.servent.models import Project
 
 class ProjectFactory(factory.Factory):
     FACTORY_FOR = Project
-    
+
     name = 'tailor project'
     slug = 'tailor-project'
 
