@@ -9,7 +9,7 @@ Using the decorator ``@tailored`` on a fabric method will set an attribute that 
 
 Example::
     
-    from tailor.decorators import tailored
+    from tailor.client.decorators import tailored
     
     @tailored
     def collect_static():
@@ -25,7 +25,7 @@ The dependency decorator is used when Tailor needs access to the fabric command 
 
 Example::
 
-    from tailor.decorators import dependency
+    from tailor.client.decorators import dependency
     
     @dependency
     def virtualenv(command):

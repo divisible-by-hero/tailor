@@ -1,0 +1,22 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<link href="{{ STATIC_URL }}servent/css/vader/jquery-ui-1.8.18.custom.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="{{ STATIC_URL }}servent/js/jquery-ui-1.8.18.custom.min.js"></script>
+<script src="{{ STATIC_URL }}servent/js/tailor.js"></script>
+<script>
+$(document).ready(function(){
+    {% if original %}
+    build_fab('{{ original.tailor_key }}', '{% url tailor.servent.views.fab object_id=original.id %}');
+    {% endif %}
+});
+</script>
+{% endblock %}
+
+{% block field_sets %}
+{% for fieldset in adminform %}
+    {% include "admin/servent/project/fieldset.html" %}
+{% endfor %}
+{% endblock %}

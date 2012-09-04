@@ -10,10 +10,10 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings as djangosettings
 from django.views.decorators.csrf import csrf_exempt
-from tailor.stitch import Sew
+#from tailor.stitch import Sew
 from fabric.api import *
 
-from tailor.decorators import tailored
+#from tailor.decorators import tailored
 
 def schema(request):
     """
@@ -163,9 +163,7 @@ def fab(request):
                 print response_dict
                 #from django.core import serializers
                 response = simplejson.dumps(response_dict)
-                data = "hello"
-                return HttpResponse(data)
-                #return HttpResponse(response, mimetype='application/json', status=200)
+                return HttpResponse(response, mimetype='application/json', status=200)
             else:
                 response_dict = {'success':False, 'message':"Coudn't not execute commands"}
                 response = simplejson.dumps(response_dict)
