@@ -8,7 +8,9 @@
 <script src="{{ STATIC_URL }}servent/js/tailor.js"></script>
 <script>
 $(document).ready(function(){
+    {% if original %}
     build_fab('{{ original.tailor_key }}', '{% url tailor.servent.views.fab object_id=original.id %}');
+    {% endif %}
 });
 </script>
 {% endblock %}
