@@ -14,37 +14,41 @@
   <body>
 
     <header>
-      <div class="container">
+      <div class="container cf">
         <h1>Tailor</h1>
-        <h2>Run Fabric commands through web API</h2>
+        <h2>Tailor is a Django app that let&rsquo;s you run Fabric commands via a web based API.</h2>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>How does Tailor work?</h1>
+        
+        <div id="video">
+            
+        </div><!-- /#video -->
+
+        <h2>Running Tailor on a separate host</h2>
+
+        <p>Optimally, Tailor should be installed on different host than the target host.  In other words, a project running Tailor on Host1 will execute Fabric commands on Host2.</p>
+
+        <h2>Running Tailor on the same host</h2>
+
+        <p>Tailor can also run on the same host you want to run Fabric commands on.  However, caution must be exercised or Tailor could cause some funky behavior. For example, if a Fabric command deleted the very project running Tailor.</p>
+
+        <h2>Docs</h2>
+
+        <p>Check out the full documentation.</p>
+
+        <p><a href="http://readthedocs.org/docs/tailor/en/latest/">http://readthedocs.org/docs/tailor/en/latest/</a></p>
+
+        <h1>Where can I get Tailor?</h1>
 
         <section id="downloads">
           <a href="https://github.com/divisible-by-hero/tailor/zipball/master" class="btn">Download as .zip</a>
           <a href="https://github.com/divisible-by-hero/tailor/tarball/master" class="btn">Download as .tar.gz</a>
           <a href="https://github.com/divisible-by-hero/tailor" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
         </section>
-      </div>
-    </header>
-
-    <div class="container">
-      <section id="main_content">
-        <h1>Tailor</h1>
-
-<p>Tailor is a Django app that let's you run Fabric commands via a web based API.</p>
-
-<h3>Running Tailor on a seperate host</h3>
-
-<p>Optimally, Tailor should be installed on different host than the target host.  In other words, a project running Tailor on Host1 will execute Fabric commands on Host2.</p>
-
-<h3>Running Tailor on the same host</h3>
-
-<p>Tailor can also run on the same host you want to run Fabric commands on.  However, caution must be exercised or Tailor could cause some funky behavior. For example, if a Fabric command deleted the very project running Tailor.</p>
-
-<h1>Docs</h1>
-
-<p>Check out the full documentation.</p>
-
-<p><a href="http://readthedocs.org/docs/tailor/en/latest/">http://readthedocs.org/docs/tailor/en/latest/</a></p>
       </section>
     </div>
 

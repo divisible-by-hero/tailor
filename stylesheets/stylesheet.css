@@ -1,11 +1,12 @@
 body {
   margin: 0;
   padding: 0;
-  background: #151515 url("../images/bkg.png") 0 0;
-  color: #eaeaea;
-  font: 16px;
+  background: #fff;
+  color: #333;
+  font-size: 16px;
+  letter-spacing: -.1em;
   line-height: 1.5;
-  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  font-family: "Lucida Grande", "Lucida Sans Unicde", "Lucida Sans", Arial, sans-serif;
 }
 
 /* General & 'Reset' Stuff */
@@ -36,25 +37,23 @@ li {
 */
 
 header {
-  background: rgba(0, 0, 0, 0.1);
+  background: #3367ae;
   width: 100%;
-  border-bottom: 1px dashed #b5e853;
-  padding: 20px 0;
+  padding: 30px 0;
   margin: 0 0 40px 0;
 }
 
 header h1 {
-  font-size: 30px;
-  line-height: 1.5;
-  margin: 0 0 0 -40px;
-  font-weight: bold;
-  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
-  color: #b5e853;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1),
-               0 0 5px rgba(181, 232, 83, 0.1),
-               0 0 10px rgba(181, 232, 83, 0.1);
-  letter-spacing: -1px;
-  -webkit-font-smoothing: antialiased;
+    background: transparent url(../images/tailor-logo.png) no-repeat 0 0;
+    font: 0/0 a;
+    color: transparent;
+    float: left;
+    height: 70px;
+    margin-bottom: 0;
+    text-shadow: none;
+    border: 0;
+    line-height: 1em;
+    width: 200px;
 }
 
 header h1:before {
@@ -63,9 +62,13 @@ header h1:before {
 }
 
 header h2 {
-  font-size: 18px;
+    float: right;
+    line-height: 1.25em;
+    margin: 20px 0 0;
+    width: 370px;
+  font-size: 16px;
   font-weight: 300;
-  color: #666;
+  color: #fff;
 }
 
 #downloads .btn {
@@ -87,20 +90,18 @@ section img {
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: normal;
-  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
-  color: #b5e853;
-  letter-spacing: -0.03em;
+  color: #3367ae;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1),
                0 0 5px rgba(181, 232, 83, 0.1),
                0 0 10px rgba(181, 232, 83, 0.1);
 }
 
 #main_content h1 {
-  font-size: 30px;
+  font-size: 24px;
 }
 
 #main_content h2 {
-  font-size: 24px;
+  font-size: 20px;
 }
 
 #main_content h3 {
@@ -190,7 +191,7 @@ hr {
 
 .btn {
   display: inline-block;
-  background: -webkit-linear-gradient(top, rgba(40, 40, 40, 0.3), rgba(35, 35, 35, 0.3) 50%, rgba(10, 10, 10, 0.3) 50%, rgba(0, 0, 0, 0.3));
+  background: #3367ae;
   padding: 8px 18px;
   border-radius: 50px;
   border: 2px solid rgba(0, 0, 0, 0.7);
@@ -227,7 +228,7 @@ hr {
 */
 
 a {
-  color: #63c0f5;
+  color: #3367ae;
   text-shadow: 0 0 5px rgba(104, 182, 255, 0.5);
 }
 
@@ -244,4 +245,10 @@ a {
 
 .cf {
   zoom:1;
+}
+
+#video {
+    background: #000;
+    height: 300px;
+    margin-bottom: 20px;
 }
