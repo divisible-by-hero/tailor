@@ -1,10 +1,10 @@
-from django.conf import settings as django_settings
-
-import simplejson
 import urllib2
 
+from django.conf import settings as django_settings
+from django.utils import simplejson
 from django.db import models
 from django.http import HttpResponse
+
 from fabric.api import *
 
 from tailor.servent.stich import Sew

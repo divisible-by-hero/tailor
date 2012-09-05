@@ -22,7 +22,7 @@ setup(name='tailor',
       url='',
       license='MIT',
       packages=find_packages(),
-      install_requires = [],
+      install_requires = ['fabric==1.4.3'],
       include_package_data=True,
       zip_safe=False,
     )

@@ -2,6 +2,12 @@
 
 {% block extrahead %}
 {{ block.super }}
+<style>
+    #tailor-fab input { margin: 0 10px; }
+    .tailor-fab-container { float: left; }
+    #tailor-available li { list-style-type: none; }
+    #tailor-terminal { display: none; font-size: 8px; }
+</style>
 <link href="{{ STATIC_URL }}servent/css/vader/jquery-ui-1.8.18.custom.css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script src="{{ STATIC_URL }}servent/js/jquery-ui-1.8.18.custom.min.js"></script>
