@@ -18,8 +18,8 @@ function build_fab(_key, _url){
     		modal: true,
     		draggable: false,
     		resizable: false,
-    		width: 500,
-    		height: 400,
+    		width: 640,
+    		height: 480,
     		title: "Terminal",
     		buttons: {
     			Ok: function() {
@@ -54,7 +54,7 @@ function build_fab(_key, _url){
             success: function(data){
                 //console.log(data.responses)
                 data.responses.forEach(function(item){
-                    $('#dashboard-terminal').append("<p>" + item.response + "</p>")
+                    $('#dashboard-terminal').append(item.response_html)
                 })
             },
     	 });

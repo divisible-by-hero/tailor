@@ -1,7 +1,7 @@
 import sys
 import os
 import pickle
-
+    
 from fabric.api import execute as fab_exec
 from django.conf import settings
 from tailor.servent import defaults as tailor_defaults
@@ -72,6 +72,8 @@ class Sew:
                 sys.stdout = old_stdout
                 command_dict['command'] = exe_command
                 command_dict['response'] = mystdout.getvalue()
+                command_dict['response_html'] = string_to_html(command_dict['response'])
+                
                 command_response.append(command_dict)
             except AttributeError:
                 response_dict = {'command': exe_command, "repsonse": "The command %s could not be found by the tailor fabric execution model." % exe_command}
@@ -89,4 +91,11 @@ class Sew:
             os.remove("%sc" % self.fabfile_path)
         except:
             pass
-        
+
+
+def string_to_html(string):
+
+    html = string.replace("\n", "<br/>")
+    html = "<p>%s</p>" % html
+
+    return html
