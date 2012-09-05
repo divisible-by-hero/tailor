@@ -2,7 +2,7 @@
 function build_fab(_key, _url){
 
     //build fab command
-    $('form').on('change', 'select', function(){
+    $('form').on('change', 'select:last-child', function(){
         // TODO Account for # too
         if (($(this).val() != '---')){
             $(this).clone().appendTo('.terminal');
@@ -16,8 +16,8 @@ function build_fab(_key, _url){
         //Create Dialog
     	$('#dashboard-terminal').dialog({
     		modal: true,
-    		draggable: false,
-    		resizable: false,
+    		draggable: true,
+    		resizable: true,
     		width: 640,
     		height: 480,
     		title: "Terminal",
@@ -52,7 +52,6 @@ function build_fab(_key, _url){
     		dataType: 'json',
     		data: JSON.stringify(post_data),
             success: function(data){
-                //console.log(data.responses)
                 data.responses.forEach(function(item){
                     $('#dashboard-terminal').append(item.response_html)
                 })
