@@ -31,24 +31,21 @@
     <div class="form-row">
         <label>Run Fab Commands</label>
         
-        <form>
-            <div class="terminal">
+        <form id='tailor-fab'>
+            <div class='tailor-fab-container'>
                 $ fab 
-                <select class='tailor-terminal-select'>
+                <select class='tailor-fab-select'>
                     <option>---</option>
                     {% for task in original.get_tasks %}
                     <option value="{{ task.name }}">{{ task.name }}</option>
                     {% endfor %}
                 </select>
             </div>
-            <input type="submit" value="Execute" id="execute" class="ksu-button">
+            <input type="submit" value="Execute" id="execute">
         </form>
     
-        <div>
-
-
-            <p>Available Tasks</p>    
-    
+        <div id='tailor-available'>
+            <p><strong>Available Tasks</strong></p>
             <ul>
                 {% for task in original.get_tasks %}
                 <li>
@@ -60,7 +57,7 @@
             </ul>
         </div>
         
-        <div id="dashboard-terminal" style="display: none; font-size: 8px;">
+        <div id="tailor-terminal">
             <p>Output</p>
         </div>
     

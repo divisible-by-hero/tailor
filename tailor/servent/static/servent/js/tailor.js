@@ -1,11 +1,11 @@
 //Tailor
 function build_fab(_key, _url){
-
+    
     //build fab command
     $('form').on('change', 'select:last-child', function(){
         // TODO Account for # too
         if (($(this).val() != '---')){
-            $(this).clone().appendTo('.terminal');
+            $(this).clone().appendTo('.tailor-fab-container');
         }
     });
 
@@ -14,7 +14,7 @@ function build_fab(_key, _url){
         e.preventDefault();
 
         //Create Dialog
-    	$('#dashboard-terminal').dialog({
+    	$('#tailor-terminal').dialog({
     		modal: true,
     		draggable: true,
     		resizable: true,
@@ -37,7 +37,7 @@ function build_fab(_key, _url){
         
         //Get tailor selects, all but last child (----)
         //Create Command objects
-        var selects = $('.tailor-terminal-select:not(:last-child)');
+        var selects = $('.tailor-fab-select:not(:last-child)');
         $.each(selects, function(index, item){
             task = { 'command': $(item).children('option:selected').val(), 'params': [] }
             post_data['commands'].push(task);
@@ -53,7 +53,7 @@ function build_fab(_key, _url){
     		data: JSON.stringify(post_data),
             success: function(data){
                 data.responses.forEach(function(item){
-                    $('#dashboard-terminal').append(item.response_html)
+                    $('#tailor-terminal').append(item.response_html)
                 })
             },
     	 });
